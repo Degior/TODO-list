@@ -5,7 +5,7 @@ import org.example.Services.HabitsTrackerService;
 import org.example.Telegram.Telegram;
 
 /**
- * Hello world!
+ * Класс запускающий TO_DO бото, с трекером привычек
  */
 public class App {
     public static void main(String[] args) {

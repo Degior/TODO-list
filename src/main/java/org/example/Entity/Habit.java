@@ -9,13 +9,13 @@ public class Habit {
     private Long chatId;
     private String name;
     private String description;
-    private int duration;
+    private int dayDuration;
 
-    public Habit(Long chatId, String name, String description, int duration) {
+    public Habit(Long chatId, String name, String description, int dayDuration) {
         this.chatId = chatId;
         this.name = name;
         this.description = description;
-        this.duration = duration;
+        this.dayDuration = dayDuration;
     }
 
     public Long getId() {
@@ -50,19 +50,25 @@ public class Habit {
         this.description = description;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getDayDuration() {
+        return dayDuration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setDayDuration(int dayDuration) {
+        this.dayDuration = dayDuration;
     }
 
+    /**
+     * Метод уменьшающий продолжительность привычки на 1
+     */
     public void decreaseDuration() {
-        this.duration--;
+        this.dayDuration--;
     }
 
+    /**
+     * Метод возвращающий информацию о привычке
+     */
     public String printValues() {
-        return "\nname = " + name + "\ndescription = " + description;
+        return "Нужно сделать\nНазвание = " + name + "\nОписание = " + description;
     }
 }

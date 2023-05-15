@@ -29,7 +29,7 @@ public class HabitsTrackerRepository {
      */
     public void removeHabitIfDurationEnd(Habit habit) {
         habit.decreaseDuration();
-        if (habit.getDuration() == 0) {
+        if (habit.getDayDuration() == 0) {
             timeToHabitsMap.values().remove(habit);
         }
     }
