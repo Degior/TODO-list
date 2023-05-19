@@ -11,6 +11,6 @@ public class Telegram implements MessageSender {
      */
     @Override
     public void sendMessage(Long chatId, String message) {
-
+        System.out.println("Telegram: " + chatId + " " + message);
     }
 }

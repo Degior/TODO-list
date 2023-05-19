@@ -69,6 +69,6 @@ public class Habit {
      * Метод возвращающий информацию о привычке
      */
     public String printValues() {
-        return "Нужно сделать\nНазвание = " + name + "\nОписание = " + description;
+        return "Название = " + name + "\nОписание = " + description;
     }
 }
