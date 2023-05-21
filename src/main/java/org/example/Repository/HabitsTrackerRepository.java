@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HabitsTrackerRepository {
-    private Map<Long, HashMap<Habit, Boolean>> chatIdToHabitsMap = new HashMap<>();
+    Map<Long, HashMap<Habit, Boolean>> chatIdToHabitsMap = new HashMap<>();
 
 
     /**

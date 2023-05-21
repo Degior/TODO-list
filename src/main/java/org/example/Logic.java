@@ -154,7 +154,7 @@ public class Logic {
      * @param chatId  идентификатор чата
      * @param message сообщение
      */
-    public String editHabit(Long chatId, String message) {
+    private String editHabit(Long chatId, String message) {
         String[] lines = message.split("\n");
         String name = null;
         String description = null;
@@ -199,5 +199,13 @@ public class Logic {
             return Report.HABIT_MARK_SUCCESS;
         }
         return Report.HABIT_MARK_FAIL;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
+    void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
     }
 }
