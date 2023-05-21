@@ -1,39 +1,26 @@
-package MessagehandlerClasses;
+package MessageProcessing;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 
 public class Filter {
-    //по-хорошему еще сделать интерфейс
-    //мб еще какую ошибку метод выкинет, проверить
 
     /**
      * Метод преобразует пользовательский ввод даты в более удобный для работы вид
      * @param message - пользовательский ввод даты
      */
 
-    public static LocalDate toFilterOutData(String message) throws FilterException{
+    public static LocalDate toFilterOutData(String message) throws FilterException {
 
         char symbol;
-        String[] date = new String[]{"00"};
+        String[] date;
         try {
             symbol = message.charAt(2);
         } catch (StringIndexOutOfBoundsException e){
             throw new FilterException("Неверный формат ввода");
         }
 
-
-        switch (symbol) {
-            case ('/'):
-                date = message.split("/");
-                break;
-            case (' '):
-                date = message.split(" ");
-                break;
-            case ('.'):
-                date = message.split("\\.");
-                break;
-        }
+        date = getStringData(message, symbol);
 
         int[] dateMonth;
 
@@ -53,6 +40,22 @@ public class Filter {
         }
 
         return localDate;
+    }
+
+    private static String[] getStringData(String message, char symbol){
+        String[] date = new String[]{"00"};
+        switch (symbol) {
+            case ('/'):
+                date = message.split("/");
+                break;
+            case (' '):
+                date = message.split(" ");
+                break;
+            case ('.'):
+                date = message.split("\\.");
+                break;
+        }
+        return date;
     }
 
 }

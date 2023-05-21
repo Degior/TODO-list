@@ -1,4 +1,4 @@
-package MessagehandlerClasses;
+package MessageProcessing;
 
 import NoteStrusture.NoteException;
 import NoteStrusture.NoteStorage;
@@ -38,7 +38,6 @@ public class NotesLogic {
             String allNotes = "";
             for (LocalDate date: noteStorage.getAllNotes()){
                 allNotes = allNotes + date + "\n";
-                //System.out.println(date);
             }
             return allNotes;
         }else {
@@ -46,10 +45,16 @@ public class NotesLogic {
         }
     }
 
+     /**
+      * Метод, возвращающий текст заметки
+      */
     public String getNote(LocalDate date) throws NoteException {
         return noteStorage.getNoteText(date);
     }
 
+     /**
+      * Метод, сбрасывающий текущую заметку
+      */
      public void changeLogic() {
         noteStorage.resetNote();
      }

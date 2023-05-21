@@ -1,5 +1,4 @@
-package MessagehandlerClasses;
-
+package MessageProcessing;
 import Commands.Commands;
 import NoteStrusture.NoteException;
 
@@ -26,23 +25,20 @@ public class MessageHandler {
     public String processCommand(String message){
         switch (message){
             case ("/start"):
-                //это состояние меню
-                System.out.println("/getNotesList /createNote /openNote");///editNote
+                System.out.println("/getNotesList /createNote /openNote");
                 return Commands.START;
             case ("/menu"):
                 state = MessageHandlerState.DEFAULT;
                 System.out.println("/getNotesList /createNote /openNote");
                 notesLogic.changeLogic();
                 return Commands.MENU;
-            case ("/getNotesList")://редактируемая заметка автоматически сохраняется
+            case ("/getNotesList"):
                 state = MessageHandlerState.DEFAULT;
                 System.out.println("/openNote /menu");
                 notesLogic.changeLogic();
                 return notesLogic.getAllNotes();
-                //return Commands.ALL_NOTES;//вывести все возможные заметки - их даты
             case ("/createNote"):
                 System.out.println("/menu");
-                //тут добавить варианты выхода отсюда
                 state = MessageHandlerState.CREATING_NOTE_DATE;
                 return Commands.NOTE_CREATION;
             case ("/openNote"):
@@ -72,13 +68,11 @@ public class MessageHandler {
             System.out.println("/getNotesList /menu");
             return Commands.NOTE_MODIFICATION;
         } else if (state.equals(MessageHandlerState.PROCESSING_NOTE)) {
-            //state = MessageHandlerState.DEFAULT;
             notesLogic.addTextToNote(message);
             System.out.println("/menu");
             return "задача добавлена";
         } else if (state.equals(MessageHandlerState.SEARCHING_NOTE)) {
             try {
-                //System.out.println("/menu");
                 state = MessageHandlerState.DEFAULT;
                 return notesLogic.getNote(Filter.toFilterOutData(message));
             }catch (NoteException e){
@@ -92,8 +86,6 @@ public class MessageHandler {
             }finally {
                 System.out.println("/menu");
             }
-
-
         }else {
             return Commands.INCORRECT_INPUT;
         }

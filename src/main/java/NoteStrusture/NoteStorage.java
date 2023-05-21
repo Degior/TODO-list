@@ -20,8 +20,7 @@ public class NoteStorage {
     }
 
     /**
-     * Метод возвращающий заметку по дате
-     * Если заметки нет, создает ее
+     * Метод создающий заметку по дате
      */
     public void appendNote(LocalDate localDate)throws NoteException{
 
@@ -31,12 +30,12 @@ public class NoteStorage {
         allNotes.put(localDate, new Note());
 
         currentNote = allNotes.get(localDate);
-        //return allNotes.get(localDate);
     }
 
     public void fillNote(String tasks){
         currentNote.addTask(tasks);
     }
+
     /**
      *Метод возвращающий список всех заметок
      */
@@ -44,6 +43,9 @@ public class NoteStorage {
         return allNotes.keySet();
     }
 
+    /**
+     *Метод возвращающий задачи из заметки
+     */
     public String getNoteText(LocalDate localDate) throws NoteException{
         if (allNotes.containsKey(localDate)){
             currentNote = allNotes.get(localDate);
@@ -52,6 +54,9 @@ public class NoteStorage {
         throw new NoteException("Заметки с такой датой не существует");
     }
 
+    /**
+     * Метод, который прекращает работу с текущей заметкой
+     */
     public void resetNote() {
         currentNote = null;
     }

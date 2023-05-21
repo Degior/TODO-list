@@ -7,8 +7,6 @@ public class Commands {
     public static final String NOTE_CREATION = "Чтобы создать заметку, укажите дату в формате ДД/MM \n"+
             "(ДД ММ, ДД.ММ)";
 
-    //public static final String NOTE_CREATION_2 = "Можете указать название заметки, например, \" понедельник день тяжелый\"";
-
     public static final String NOTE_MODIFICATION = "Теперь можешь внести в план на день несколько задач. \n";
 
     public static final String EDIT = "Внесение измненний.........";
