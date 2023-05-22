@@ -4,12 +4,12 @@ import Readers.Reader;
 /**
  * Класс запускающий всю логику (предшественник телеграма)
  */
-public class MainLogic implements MessageSender{
+public class Telegram implements MessageSender{
     Reader reader;
 
     MessageHandler messageHandler;
 
-    public MainLogic(Reader reader){
+    public Telegram(Reader reader){
         this.reader = reader;
         messageHandler = new MessageHandler();
     }

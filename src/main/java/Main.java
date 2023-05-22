@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] args) {
         Reader reader = new ConsoleReader();
-        MainLogic mainLogic = new MainLogic(reader);
+        Telegram mainLogic = new Telegram(reader);
         mainLogic.doLogic();
     }
 
