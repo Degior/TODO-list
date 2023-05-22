@@ -34,7 +34,7 @@ public class MessageHandler {
                 return Commands.MENU;
             case ("/getNotesList"):
                 state = MessageHandlerState.DEFAULT;
-                System.out.println("/openNote /menu");
+                System.out.println("/openNote /deleteNote /menu");
                 notesLogic.changeLogic();
                 return notesLogic.getAllNotes();
             case ("/createNote"):
@@ -53,41 +53,52 @@ public class MessageHandler {
      * Метод, обрабытывающий специфичный пользовательский ввод (не зарезервированные команды)
      * @param message - ввод пользователя
      */
+
     private String processUserInput(String message){
-        if (state.equals(MessageHandlerState.CREATING_NOTE_DATE)){
-            try {
-                notesLogic.addNote(Filter.toFilterOutData(message));
-                state = MessageHandlerState.PROCESSING_NOTE;
-            }catch (NoteException e){
-                System.out.println("/menu"); //editNote");
-                return Commands.NOTE_ALREADY_EXIST;
-            }
-            catch (FilterException e){
-                return Commands.INCORRECT_INPUT;
-            }
-            System.out.println("/getNotesList /menu");
-            return Commands.NOTE_MODIFICATION;
-        } else if (state.equals(MessageHandlerState.PROCESSING_NOTE)) {
-            notesLogic.addTextToNote(message);
-            System.out.println("/menu");
-            return "задача добавлена";
-        } else if (state.equals(MessageHandlerState.SEARCHING_NOTE)) {
-            try {
-                state = MessageHandlerState.DEFAULT;
-                return notesLogic.getNote(Filter.toFilterOutData(message));
-            }catch (NoteException e){
-                System.out.print("/createNote /menu");
-                state = MessageHandlerState.SEARCHING_NOTE;
-                return Commands.NO_SUCH_NOTE;
-            }catch (FilterException e){
-                System.out.print("/menu");
-                state = MessageHandlerState.SEARCHING_NOTE;
-                return Commands.INCORRECT_INPUT;
-            }finally {
-                System.out.println("/menu");
-            }
-        }else {
+        return switch (state){
+            case CREATING_NOTE_DATE -> appendNote(message);
+            case PROCESSING_NOTE -> toProcessExistingNote(message);
+            case SEARCHING_NOTE -> toLookForNote(message);
+            default -> Commands.INCORRECT_INPUT;
+        };
+    }
+
+    private String appendNote(String message){
+        try {
+            notesLogic.addNote(Filter.toFilterOutData(message));
+            state = MessageHandlerState.PROCESSING_NOTE;
+        }catch (NoteException e){
+            System.out.print("/menu"); //editNote");
+            return Commands.NOTE_ALREADY_EXIST;
+        }
+        catch (FilterException e){
             return Commands.INCORRECT_INPUT;
         }
+        System.out.print("/getNotesList /menu");
+        return Commands.NOTE_MODIFICATION;
     }
+
+    private String toProcessExistingNote(String message){
+        notesLogic.addTextToNote(message);
+        System.out.println("/menu /getNotesList");
+        return Commands.TASK_ADDED;
+    }
+
+    private String toLookForNote(String message){
+        try {
+            state = MessageHandlerState.DEFAULT;
+            return notesLogic.getNote(Filter.toFilterOutData(message));
+        }catch (NoteException e){
+            System.out.print("/createNote /menu");
+            state = MessageHandlerState.SEARCHING_NOTE;
+            return Commands.NO_SUCH_NOTE;
+        }catch (FilterException e){
+            System.out.print("/menu");
+            state = MessageHandlerState.SEARCHING_NOTE;
+            return Commands.INCORRECT_INPUT;
+        }finally {
+            System.out.println("/menu");
+        }
+    }
+
 }

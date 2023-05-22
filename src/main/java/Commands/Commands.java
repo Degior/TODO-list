@@ -7,7 +7,7 @@ public class Commands {
     public static final String NOTE_CREATION = "Чтобы создать заметку, укажите дату в формате ДД/MM \n"+
             "(ДД ММ, ДД.ММ)";
 
-    public static final String NOTE_MODIFICATION = "Теперь можешь внести в план на день несколько задач. \n";
+    public static final String NOTE_MODIFICATION = "Теперь можешь внести в план на день несколько задач через Enter. \n";
 
     public static final String EDIT = "Внесение измненний.........";
 
@@ -25,5 +25,7 @@ public class Commands {
     public static final String NO_SUCH_NOTE = "Такой заметки не существует. Можете попробовать еще раз";
 
     public static final String NOTE_ALREADY_EXIST = "Такая заметка уже существует.";// Хотите ее дополнить?";
+
+    public static final String TASK_ADDED = "Задача добавлена";
 
 }
