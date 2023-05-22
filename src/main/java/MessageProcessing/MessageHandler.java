@@ -29,7 +29,7 @@ public class MessageHandler {
                 return Commands.START;
             case ("/menu"):
                 state = MessageHandlerState.DEFAULT;
-                System.out.println("/getNotesList /createNote /openNote");
+                System.out.println("/getNotesList /createNote /openNote /deleteNote");
                 notesLogic.changeLogic();
                 return Commands.MENU;
             case ("/getNotesList"):
@@ -45,6 +45,10 @@ public class MessageHandler {
                 System.out.println("/menu /getNotesList");
                 state = MessageHandlerState.SEARCHING_NOTE;
                 return Commands.NOTE_SEARCH;
+            case ("/deleteNote"):
+                System.out.println("/menu /getNotesList");
+                state = MessageHandlerState.DELETING_NOTE;
+                return Commands.DELETE_NOTE;
             default:
                 return processUserInput(message);
         }
@@ -59,6 +63,7 @@ public class MessageHandler {
             case CREATING_NOTE_DATE -> appendNote(message);
             case PROCESSING_NOTE -> toProcessExistingNote(message);
             case SEARCHING_NOTE -> toLookForNote(message);
+            case DELETING_NOTE -> toDeleteNote(message);
             default -> Commands.INCORRECT_INPUT;
         };
     }
@@ -68,19 +73,19 @@ public class MessageHandler {
             notesLogic.addNote(Filter.toFilterOutData(message));
             state = MessageHandlerState.PROCESSING_NOTE;
         }catch (NoteException e){
-            System.out.print("/menu"); //editNote");
+            System.out.println("/menu"); //editNote");
             return Commands.NOTE_ALREADY_EXIST;
         }
         catch (FilterException e){
             return Commands.INCORRECT_INPUT;
         }
-        System.out.print("/getNotesList /menu");
+        System.out.println("/getNotesList /menu");
         return Commands.NOTE_MODIFICATION;
     }
 
     private String toProcessExistingNote(String message){
         notesLogic.addTextToNote(message);
-        System.out.println("/menu /getNotesList");
+        System.out.println("/menu /getNotesList /createNote");
         return Commands.TASK_ADDED;
     }
 
@@ -93,12 +98,29 @@ public class MessageHandler {
             state = MessageHandlerState.SEARCHING_NOTE;
             return Commands.NO_SUCH_NOTE;
         }catch (FilterException e){
-            System.out.print("/menu");
             state = MessageHandlerState.SEARCHING_NOTE;
             return Commands.INCORRECT_INPUT;
         }finally {
-            System.out.println("/menu");
+            System.out.println("/menu /getNotesList");
         }
     }
+
+    private String toDeleteNote(String message){
+        try{
+            state = MessageHandlerState.DEFAULT;
+            if (notesLogic.deleteNote(Filter.toFilterOutData(message))){
+                return Commands.NOTE_DELETED;
+            }
+            else {
+                return Commands.NO_SUCH_NOTE;
+            }
+        }catch (FilterException e){
+            state = MessageHandlerState.DELETING_NOTE;
+            return Commands.INCORRECT_INPUT;
+        }finally {
+            System.out.println("/menu /getNotesList");
+        }
+    }
+
 
 }

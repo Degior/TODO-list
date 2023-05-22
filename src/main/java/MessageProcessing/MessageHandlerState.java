@@ -6,4 +6,6 @@ enum MessageHandlerState {
     SEARCHING_NOTE,
     DEFAULT,
 
+    DELETING_NOTE,
+
 }

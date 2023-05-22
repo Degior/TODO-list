@@ -52,6 +52,13 @@ public class NotesLogic {
         return noteStorage.getNoteText(date);
     }
 
+    public boolean deleteNote(LocalDate date){
+        if (noteStorage.deleteNote(date)){
+            return true;
+        }
+        return false;
+    }
+
      /**
       * Метод, сбрасывающий текущую заметку
       */

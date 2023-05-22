@@ -24,8 +24,13 @@ public class Commands {
 
     public static final String NO_SUCH_NOTE = "Такой заметки не существует. Можете попробовать еще раз";
 
-    public static final String NOTE_ALREADY_EXIST = "Такая заметка уже существует.";// Хотите ее дополнить?";
+    public static final String NOTE_ALREADY_EXIST = "Такая заметка уже существует. Создайте новую" +
+            "(редактирование во 2 таске)";// Хотите ее дополнить?";
 
     public static final String TASK_ADDED = "Задача добавлена";
+
+    public static final String DELETE_NOTE = "Введите дату заметки в формате ДД/ММ (ДД ММ, ДД.ММ)";
+
+    public static final String NOTE_DELETED = "Заметка удалена";
 
 }

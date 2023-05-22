@@ -54,6 +54,14 @@ public class NoteStorage {
         throw new NoteException("Заметки с такой датой не существует");
     }
 
+    public boolean deleteNote(LocalDate localDate){
+        if (allNotes.containsKey(localDate)){
+            allNotes.remove(localDate);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Метод, который прекращает работу с текущей заметкой
      */
