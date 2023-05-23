@@ -1,17 +1,12 @@
-package FilterTest;
+package MessafeProcessingTests;
 
 import MessageProcessing.Filter;
 import MessageProcessing.FilterException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-
-import java.io.IOException;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FilterTest {
 
@@ -30,6 +25,16 @@ public class FilterTest {
 
         FilterException thrown = Assertions.assertThrows(FilterException.class, () -> {
             Filter.toFilterOutData("20 20");
+        });
+
+        Assertions.assertEquals("Неверный формат ввода", thrown.getMessage());
+    }
+
+    @Test
+    void testExpectedException2() {
+
+        FilterException thrown = Assertions.assertThrows(FilterException.class, () -> {
+            Filter.toFilterOutData("200");
         });
 
         Assertions.assertEquals("Неверный формат ввода", thrown.getMessage());
