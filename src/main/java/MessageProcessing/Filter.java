@@ -2,6 +2,8 @@ package MessageProcessing;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Filter {
 
@@ -12,6 +14,9 @@ public class Filter {
 
     public static LocalDate toFilterOutData(String message) throws FilterException {
 
+        if (!checkRegex(message)){
+            throw new FilterException("Неверный формат ввода");
+        }
         char symbol;
         String[] date;
         try {
@@ -58,4 +63,24 @@ public class Filter {
         return date;
     }
 
+    private static boolean checkRegex(String message){
+        Matcher matcher;
+        Pattern pattern = Pattern.compile("\\d{2}\\s\\d{2}");
+        Pattern pattern2 = Pattern.compile("\\d{2}.\\d{2}");
+        Pattern pattern3 = Pattern.compile("\\d{2}/\\d{2}");
+
+        matcher = pattern.matcher(message);
+        if (matcher.find()){
+            return true;
+        }
+        matcher = pattern2.matcher(message);
+        if (matcher.find()){
+            return true;
+        }
+        matcher = pattern3.matcher(message);
+        if (matcher.find()){
+            return true;
+        }
+        return false;
+    }
 }
