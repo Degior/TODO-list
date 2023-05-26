@@ -1,4 +1,4 @@
-package MessageProcessing;
+package org.example.MessageProcessing;
 
 public class FilterException extends Exception{
 

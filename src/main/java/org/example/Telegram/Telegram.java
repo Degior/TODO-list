@@ -1,6 +1,6 @@
 package org.example.Telegram;
 
-import org.example.Logic;
+import org.example.MessageProcessing.MessageHandler;
 
 import java.util.Scanner;
 
@@ -8,15 +8,13 @@ import java.util.Scanner;
  * Класс отвечающей за работу Telegram. Пока не реализован.
  */
 public class Telegram implements MessageSender {
-    private final Logic logic;
+    private final MessageHandler messageHandler;
 
     /**
      * Конструктор класса Telegram
-     *
-     * @param logic
      */
-    public Telegram(Logic logic) {
-        this.logic = logic;
+    public Telegram(MessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
     }
 
     /**
@@ -28,8 +26,8 @@ public class Telegram implements MessageSender {
         while (true) {
             System.out.print("Введите сообщение: ");
             String input = scanner.nextLine();
-            String response = logic.processInput(chatId, input);
-            System.out.println(response);
+            String response = messageHandler.processInput(chatId, input);
+            sendMessage(chatId, response);
         }
     }
 

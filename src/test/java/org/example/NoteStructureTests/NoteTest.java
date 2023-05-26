@@ -1,7 +1,6 @@
-package NoteStructureTests;
+package org.example.NoteStructureTests;
 
-import NoteStrusture.Note;
-import NoteStrusture.Task;
+import org.example.NoteStrusture.Note;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

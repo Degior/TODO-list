@@ -13,6 +13,12 @@ public class Report {
             Я умею показывать твои дела и привычки и добавлять новые
             /help
             вывести это сообщение
+            /getNotesList
+            показать список дел
+            /createNote
+            добавить дело
+            /deleteNote
+            удалить дело
             /addHabit
             добавить привычку
             /removeHabit
@@ -46,4 +52,13 @@ public class Report {
     public static final String NO_HABITS = "У вас нет привычек!"; // Сообщение, если у пользователя нет привычек
     public static final String HABIT_MARK_SUCCESS = "Привычка успешно отмечена!"; // Сообщение, если привычка успешно отмечена
     public static final String HABIT_MARK_FAIL = "Привычка не отмечена!"; // Сообщение, если привычка не отмечена
+    public static final String NOTE_CREATION = "Чтобы создать заметку, укажите дату в формате ДД/MM \n(ДД ММ, ДД.ММ)"; // Сообщение, если пользователь хочет создать заметку
+    public static final String NOTE_SEARCH = "Введите название заметки в формате даты.\nУкажите дату в формате либо ДД/ММ (ДД ММ, ДД.ММ)"; // Сообщение, если пользователь хочет найти заметку
+    public static final String DELETE_NOTE = "Вы уверены?"; // Сообщение, если пользователь хочет удалить заметку
+    public static final String NOTE_DELETED = "Заметка удалена"; // Сообщение, если заметка удалена
+    public static final String NOTE_MODIFICATION = "Теперь можешь внести в план на день несколько задач через Enter. \n"; // Сообщение, если пользователь хочет изменить заметку
+    public static final String TASK_ADDED = "Задача добавлена"; // Сообщение, если задача добавлена
+    public static final String NOTE_ALREADY_EXIST = "Такая заметка уже существует. Создайте новую (редактирование во 2 таске)";// Хотите ее дополнить?";
+    public static final String NO_SUCH_NOTE = "Такой заметки не существует. Можете попробовать еще раз"; // Сообщение, если заметки не существует
+
 }

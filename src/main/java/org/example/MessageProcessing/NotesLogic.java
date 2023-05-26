@@ -1,7 +1,7 @@
-package MessageProcessing;
+package org.example.MessageProcessing;
 
-import NoteStrusture.NoteException;
-import NoteStrusture.NoteStorage;
+import org.example.NoteStrusture.NoteException;
+import org.example.NoteStrusture.NoteStorage;
 
 import java.time.LocalDate;
 

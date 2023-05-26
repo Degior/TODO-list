@@ -1,7 +1,7 @@
-package MessafeProcessingTests;
+package org.example.MessafeProcessingTests;
 
-import MessageProcessing.Filter;
-import MessageProcessing.FilterException;
+import org.example.MessageProcessing.Filter;
+import org.example.MessageProcessing.FilterException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

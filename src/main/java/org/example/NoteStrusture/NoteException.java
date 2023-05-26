@@ -1,4 +1,4 @@
-package NoteStrusture;
+package org.example.NoteStrusture;
 
 public class NoteException extends Exception{
 

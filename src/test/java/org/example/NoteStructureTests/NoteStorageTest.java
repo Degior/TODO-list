@@ -1,7 +1,7 @@
-package NoteStructureTests;
+package org.example.NoteStructureTests;
 
-import NoteStrusture.NoteException;
-import NoteStrusture.NoteStorage;
+import org.example.NoteStrusture.NoteException;
+import org.example.NoteStrusture.NoteStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

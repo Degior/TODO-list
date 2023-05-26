@@ -1,4 +1,4 @@
-package NoteStrusture;
+package org.example.NoteStrusture;
 
 import java.util.ArrayList;
 import java.util.List;

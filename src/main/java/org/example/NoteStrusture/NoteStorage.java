@@ -1,4 +1,4 @@
-package NoteStrusture;
+package org.example.NoteStrusture;
 
 import java.time.LocalDate;
 import java.util.HashMap;

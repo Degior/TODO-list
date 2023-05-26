@@ -1,22 +1,24 @@
-package org.example;
+package org.example.MessageProcessing;
 
 import org.example.Entity.Habit;
+import org.example.NoteStrusture.NoteException;
+import org.example.Report;
 import org.example.Repository.HabitsTrackerRepository;
 
 /**
  * Класс Logic. Отвечает за логику работы программы.
  */
-public class Logic {
+public class MessageHandler {
     private final HabitsTrackerRepository habitsTrackerRepository;
+    private NotesLogic notesLogic = new NotesLogic();
 
-    public Logic(HabitsTrackerRepository habitsTrackerRepository) {
+    private MessageHandlerState messageHandlerState = MessageHandlerState.DEFAULT;
+
+    public MessageHandler(HabitsTrackerRepository habitsTrackerRepository) {
         this.habitsTrackerRepository = habitsTrackerRepository;
     }
 
-    private final String[] commands = {"/start", "/help", "/addHabit", "/removeHabit", "/showHabit", "/editHabit"};
-
     private String nameHabitThatUserWantsToEdit = null;
-    private String lastMessage = null;
 
     /**
      * Замена сообщений на специальные команды
@@ -29,6 +31,10 @@ public class Logic {
         return switch (textMsg) {
             case "Начать" -> "/start";
             case "Помощь" -> "/help";
+            case "Список дел" -> "/getNotesList";
+            case "Добавить дело" -> "/createNote";
+            case "Открыть дело" -> "/openNote";
+            case "Удалить дело" -> "/deleteNote";
             case "Просмотреть привычки" -> "/showHabit";
             case "Добавить привычку" -> "/addHabit";
             case "Убрать привычку" -> "/removeHabit";
@@ -63,19 +69,32 @@ public class Logic {
                 return Report.START_MESSAGE;
             case "/help":
                 return Report.HELP_MESSAGE;
+            case "/getNotesList":
+                messageHandlerState = MessageHandlerState.DEFAULT;
+                notesLogic.changeLogic();
+                return notesLogic.getAllNotes();
+            case "/createNote":
+                messageHandlerState = MessageHandlerState.CREATING_NOTE_DATE;
+                return Report.NOTE_CREATION;
+            case "/openNote":
+                messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
+                return Report.NOTE_SEARCH;
+            case "/deleteNote":
+                messageHandlerState = MessageHandlerState.DELETING_NOTE;
+                return Report.DELETE_NOTE;
             case "/addHabit":
-                lastMessage = Report.HABIT_ADD;
+                messageHandlerState = MessageHandlerState.HABIT_ADDING;
                 return Report.HABIT_ADD;
             case "/removeHabit":
-                lastMessage = Report.HABIT_REMOVE;
+                messageHandlerState = MessageHandlerState.HABIT_REMOVING;
                 return Report.HABIT_REMOVE;
             case "/showHabit":
                 return Report.HABIT_SHOW;
             case "/editHabit":
-                lastMessage = Report.HABIT_EDIT;
+                messageHandlerState = MessageHandlerState.HABIT_EDITING;
                 return Report.HABIT_EDIT;
             case "/markHabit":
-                lastMessage = Report.HABIT_MARK;
+                messageHandlerState = MessageHandlerState.HABIT_MARKING;
                 return Report.HABIT_MARK;
             default:
                 return Report.DEFAULT_MESSAGE;
@@ -83,16 +102,59 @@ public class Logic {
     }
 
     private String getNonSpecialCommand(Long chatId, String textMsg) {
-        return switch (lastMessage) {
-            case Report.HABIT_ADD -> addHabit(chatId, textMsg);
-            case Report.HABIT_REMOVE -> removeHabit(chatId, textMsg);
-            case Report.HABIT_EDIT -> getEditHabit(chatId, textMsg);
-            case Report.HABIT_EDIT_GETTER -> editHabit(chatId, textMsg);
-            case Report.HABIT_MARK -> markHabit(chatId, textMsg);
+        return switch (messageHandlerState) {
+            case CREATING_NOTE_DATE -> appendNote(textMsg);
+            case PROCESSING_NOTE -> toProcessExistingNote(textMsg);
+            case SEARCHING_NOTE -> toLookForNote(textMsg);
+            case HABIT_ADDING -> addHabit(chatId, textMsg);
+            case HABIT_REMOVING -> removeHabit(chatId, textMsg);
+            case HABIT_EDITING -> getEditHabit(chatId, textMsg);
+            case HABIT_EDITING_GETTER -> editHabit(chatId, textMsg);
+            case HABIT_MARKING -> markHabit(chatId, textMsg);
             default -> Report.DEFAULT_MESSAGE;
         };
     }
 
+
+    private String appendNote(String message) {
+        try {
+            notesLogic.addNote(Filter.toFilterOutData(message));
+            messageHandlerState = MessageHandlerState.PROCESSING_NOTE;
+        } catch (NoteException e) {
+            return Report.NOTE_ALREADY_EXIST;
+        } catch (FilterException e) {
+            return Report.DEFAULT_MESSAGE;
+        }
+        return Report.NOTE_MODIFICATION;
+    }
+
+    private String toProcessExistingNote(String message) {
+        notesLogic.addTextToNote(message);
+        return Report.TASK_ADDED;
+    }
+
+    private String toLookForNote(String message) {
+        try {
+            messageHandlerState = MessageHandlerState.DEFAULT;
+            return notesLogic.getNote(Filter.toFilterOutData(message));
+        } catch (NoteException e) {
+            messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
+            return Report.NO_SUCH_NOTE;
+        } catch (FilterException e) {
+            messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
+            return Report.DEFAULT_MESSAGE;
+        }
+    }
+
+    private String toDeleteNote() {
+        messageHandlerState = MessageHandlerState.DEFAULT;
+        System.out.println("/menu /getNotesList");
+        if (notesLogic.deleteNote()) {
+            return Report.NOTE_DELETED;
+        } else {
+            return Report.NO_SUCH_NOTE;
+        }
+    }
 
     /**
      * Метод для добавления привычки.
@@ -141,7 +203,7 @@ public class Logic {
      */
     private String getEditHabit(Long chatId, String habitName) {
         if (habitsTrackerRepository.checkHabit(chatId, habitName)) {
-            lastMessage = Report.HABIT_EDIT_GETTER;
+            messageHandlerState = MessageHandlerState.HABIT_EDITING_GETTER;
             nameHabitThatUserWantsToEdit = habitName;
             return Report.HABIT_EDIT_GETTER;
         }
@@ -199,13 +261,5 @@ public class Logic {
             return Report.HABIT_MARK_SUCCESS;
         }
         return Report.HABIT_MARK_FAIL;
-    }
-
-    public String getLastMessage() {
-        return lastMessage;
-    }
-
-    void setLastMessage(String lastMessage) {
-        this.lastMessage = lastMessage;
     }
 }

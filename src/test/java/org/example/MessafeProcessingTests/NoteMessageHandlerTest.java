@@ -1,14 +1,14 @@
-package MessafeProcessingTests;
+package org.example.MessafeProcessingTests;
 
-import MessageProcessing.NotesLogic;
-import NoteStrusture.NoteException;
+import org.example.MessageProcessing.NotesLogic;
+import org.example.NoteStrusture.NoteException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-public class NoteLogicTest {
+public class NoteMessageHandlerTest {
 
     NotesLogic notesLogic = new NotesLogic();
     LocalDate localDate = LocalDate.of(LocalDate.now().getYear(), 10, 10);

@@ -1,4 +1,4 @@
-package MessageProcessing;
+package org.example.MessageProcessing;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -71,9 +71,6 @@ public class Filter {
             return true;
         }
         matcher = pattern3.matcher(message);
-        if (matcher.find()){
-            return true;
-        }
-        return false;
+        return matcher.find();
     }
 }
