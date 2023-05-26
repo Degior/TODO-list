@@ -19,21 +19,14 @@ public class Filter {
         }
         char symbol;
         String[] date;
-        try {
-            symbol = message.charAt(2);
-        } catch (StringIndexOutOfBoundsException e){
-            throw new FilterException("Неверный формат ввода");
-        }
+
+        symbol = message.charAt(2);
 
         date = getStringData(message, symbol);
 
         int[] dateMonth;
 
-        try {
-            dateMonth =new int[]{Integer.parseInt(date[0]), Integer.parseInt(date[1])};
-        }catch (ArrayIndexOutOfBoundsException e){
-            throw new  FilterException("Неверный формат ввода");
-        }
+        dateMonth =new int[]{Integer.parseInt(date[0]), Integer.parseInt(date[1])};
 
         LocalDate localDate;
         try{
