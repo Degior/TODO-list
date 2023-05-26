@@ -45,7 +45,7 @@ public class NoteStorageTest {
 
     @Test
     public void deleteNoteTest(){
-        Assertions.assertEquals(true, noteStorage.deleteNote(localDate));
+        Assertions.assertEquals(true, noteStorage.deleteNote());
 
     }
 }

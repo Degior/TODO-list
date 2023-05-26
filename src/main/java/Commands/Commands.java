@@ -29,7 +29,7 @@ public class Commands {
 
     public static final String TASK_ADDED = "Задача добавлена";
 
-    public static final String DELETE_NOTE = "Введите дату заметки в формате ДД/ММ (ДД ММ, ДД.ММ)";
+    public static final String DELETE_NOTE = "Вы уверены?";
 
     public static final String NOTE_DELETED = "Заметка удалена";
 

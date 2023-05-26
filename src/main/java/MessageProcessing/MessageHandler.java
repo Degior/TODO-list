@@ -29,12 +29,12 @@ public class MessageHandler {
                 return Commands.START;
             case ("/menu"):
                 state = MessageHandlerState.DEFAULT;
-                System.out.println("/getNotesList /createNote /openNote /deleteNote");
+                System.out.println("/getNotesList /createNote /openNote");
                 notesLogic.changeLogic();
                 return Commands.MENU;
             case ("/getNotesList"):
                 state = MessageHandlerState.DEFAULT;
-                System.out.println("/openNote /deleteNote /menu");
+                System.out.println("/menu /openNote /createNote");
                 notesLogic.changeLogic();
                 return notesLogic.getAllNotes();
             case ("/createNote"):
@@ -46,9 +46,13 @@ public class MessageHandler {
                 state = MessageHandlerState.SEARCHING_NOTE;
                 return Commands.NOTE_SEARCH;
             case ("/deleteNote"):
-                System.out.println("/menu /getNotesList");
+                System.out.println("/yes /no");
                 state = MessageHandlerState.DELETING_NOTE;
                 return Commands.DELETE_NOTE;
+            case ("/yes"):
+                return toDeleteNote();
+            case ("/no"):
+
             default:
                 return processUserInput(message);
         }
@@ -63,7 +67,7 @@ public class MessageHandler {
             case CREATING_NOTE_DATE -> appendNote(message);
             case PROCESSING_NOTE -> toProcessExistingNote(message);
             case SEARCHING_NOTE -> toLookForNote(message);
-            case DELETING_NOTE -> toDeleteNote(message);
+            //case DELETING_NOTE -> toDeleteNote();
             default -> Commands.INCORRECT_INPUT;
         };
     }
@@ -73,54 +77,53 @@ public class MessageHandler {
             notesLogic.addNote(Filter.toFilterOutData(message));
             state = MessageHandlerState.PROCESSING_NOTE;
         }catch (NoteException e){
-            System.out.println("/menu"); //editNote");
+            System.out.println("/menu");
             return Commands.NOTE_ALREADY_EXIST;
         }
         catch (FilterException e){
             return Commands.INCORRECT_INPUT;
         }
-        System.out.println("/getNotesList /menu");
+        System.out.println(" /getNotesList /menu");
         return Commands.NOTE_MODIFICATION;
     }
 
     private String toProcessExistingNote(String message){
         notesLogic.addTextToNote(message);
-        System.out.println("/menu /getNotesList /createNote");
+        System.out.println("/menu /getNotesList /editNote /deleteNote");
         return Commands.TASK_ADDED;
     }
 
     private String toLookForNote(String message){
+        boolean flag = false;
         try {
             state = MessageHandlerState.DEFAULT;
             return notesLogic.getNote(Filter.toFilterOutData(message));
         }catch (NoteException e){
-            System.out.print("/createNote /menu");
+            flag = true;
+            System.out.print("/createNote");
             state = MessageHandlerState.SEARCHING_NOTE;
             return Commands.NO_SUCH_NOTE;
         }catch (FilterException e){
+            flag = true;
             state = MessageHandlerState.SEARCHING_NOTE;
             return Commands.INCORRECT_INPUT;
         }finally {
-            System.out.println("/menu /getNotesList");
+            if (!flag){
+                System.out.print("/editNote /deleteNote");
+            }
+            System.out.println("/menu");
         }
     }
 
-    private String toDeleteNote(String message){
-        try{
-            state = MessageHandlerState.DEFAULT;
-            if (notesLogic.deleteNote(Filter.toFilterOutData(message))){
-                return Commands.NOTE_DELETED;
-            }
-            else {
-                return Commands.NO_SUCH_NOTE;
-            }
-        }catch (FilterException e){
-            state = MessageHandlerState.DELETING_NOTE;
-            return Commands.INCORRECT_INPUT;
-        }finally {
-            System.out.println("/menu /getNotesList");
+    private String toDeleteNote(){
+        state = MessageHandlerState.DEFAULT;
+        System.out.println("/menu /getNotesList");
+        if (notesLogic.deleteNote()){
+            return Commands.NOTE_DELETED;
+        }
+        else {
+            return Commands.NO_SUCH_NOTE;
         }
     }
-
 
 }

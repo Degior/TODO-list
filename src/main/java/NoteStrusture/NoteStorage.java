@@ -54,12 +54,23 @@ public class NoteStorage {
         throw new NoteException("Заметки с такой датой не существует");
     }
 
-    public boolean deleteNote(LocalDate localDate){
-        if (allNotes.containsKey(localDate)){
-            allNotes.remove(localDate);
+    public boolean deleteNote(){
+        LocalDate date = keySearcher();
+        if (date != null){
+            allNotes.remove(date);
+            resetNote();//,м сделать приватной
             return true;
         }
         return false;
+    }
+
+    private LocalDate keySearcher(){
+        for (Map.Entry<LocalDate, Note> pair : allNotes.entrySet()) {
+            if (currentNote.equals(pair.getValue())) {
+                return pair.getKey();
+            }
+        }
+        return null;
     }
 
     /**
