@@ -89,16 +89,24 @@ public class MessageHandler {
                 messageHandlerState = MessageHandlerState.HABIT_REMOVING;
                 return Report.HABIT_REMOVE;
             case "/showHabit":
-                return Report.HABIT_SHOW;
+                messageHandlerState = MessageHandlerState.DEFAULT;
+                return showHabits(chatId);
             case "/editHabit":
                 messageHandlerState = MessageHandlerState.HABIT_EDITING;
                 return Report.HABIT_EDIT;
             case "/markHabit":
                 messageHandlerState = MessageHandlerState.HABIT_MARKING;
                 return Report.HABIT_MARK;
+            case "/cancel":
+                messageHandlerState = MessageHandlerState.DEFAULT;
+                return Report.CANCEL;
             default:
                 return Report.DEFAULT_MESSAGE;
         }
+    }
+
+    private String showHabits(Long chatId) {
+        return habitsTrackerRepository.getHabits(chatId);
     }
 
     private String getNonSpecialCommand(Long chatId, String textMsg) {
@@ -195,19 +203,20 @@ public class MessageHandler {
      * @param textMsg сообщение
      */
     private String addHabit(Long chatId, String textMsg) {
-        String[] habitContains = textMsg.split("\\r?\\n");
+        String[] habitContains = textMsg.split(";");
         if (habitContains.length == 3) {
             String habitName = habitContains[0];
             String habitDescription = habitContains[1];
             String habitDayDurationString = habitContains[2];
             int habitDayDurationInt;
             try {
-                habitDayDurationInt = Integer.parseInt(habitDayDurationString);
+                habitDayDurationInt = Integer.parseInt(habitDayDurationString.trim());
             } catch (NumberFormatException e) {
                 return Report.HABIT_ADD_FAIL;
             }
             Habit habit = new Habit(habitName, habitDescription, habitDayDurationInt);
             if (habitsTrackerRepository.addHabit(chatId, habit)) {
+                messageHandlerState = MessageHandlerState.DEFAULT;
                 return Report.HABIT_ADD_SUCCESS;
             }
         }
@@ -249,7 +258,7 @@ public class MessageHandler {
      * @param message сообщение
      */
     private String editHabit(Long chatId, String message) {
-        String[] lines = message.split("\n");
+        String[] lines = message.split(";");
         String name = null;
         String description = null;
         int duration = -1;
@@ -293,5 +302,13 @@ public class MessageHandler {
             return Report.HABIT_MARK_SUCCESS;
         }
         return Report.HABIT_MARK_FAIL;
+    }
+
+    private void setMessageHandlerStateToDefault(Long chatId) {
+        messageHandlerState = MessageHandlerState.DEFAULT;
+    }
+
+    public MessageHandlerState getMessageHandlerState() {
+        return messageHandlerState;
     }
 }

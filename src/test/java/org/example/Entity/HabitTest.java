@@ -11,19 +11,6 @@ public class HabitTest {
     public void setup() {
         habit = new Habit("Exercise", "Daily workout routine", 30);
     }
-
-    @Test
-    public void testGetId() {
-        habit.setId(1L);
-        Assertions.assertEquals(1L, habit.getId());
-    }
-
-    @Test
-    public void testGetChatId() {
-        habit.setChatId(100L);
-        Assertions.assertEquals(100L, habit.getChatId());
-    }
-
     @Test
     public void testGetName() {
         Assertions.assertEquals("Exercise", habit.getName());

@@ -63,7 +63,9 @@ public class HabitsTrackerRepositoryTest {
         habitsTrackerRepository.addHabit(chatId, habit2);
 
         String result = habitsTrackerRepository.getHabits(chatId);
-        String expected = "Exercise\nRead\n";
+        String expected = "Название = Exercise\n" +
+                "Описание = Do exercise daily\n" + "Название = Read\n" +
+                "Описание = Read a book\n";
         Assertions.assertEquals(expected, result);
     }
 

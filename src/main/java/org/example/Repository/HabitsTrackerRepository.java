@@ -18,17 +18,18 @@ public class HabitsTrackerRepository {
      * @return true, если привычка добавлена, false, если привычка уже существует
      */
     public boolean addHabit(Long chatId, Habit habit) {
+        HashMap<Habit, Boolean> habitBooleanHashMap;
         if (chatIdToHabitsMap.containsKey(chatId)) {
-            HashMap<Habit, Boolean> habitBooleanHashMap = chatIdToHabitsMap.get(chatId);
+            habitBooleanHashMap = chatIdToHabitsMap.get(chatId);
             if (habitBooleanHashMap.containsKey(habit)) {
                 return false;
             }
             habitBooleanHashMap.put(habit, false);
-            return true;
+        } else {
+            habitBooleanHashMap = new HashMap<>();
+            habitBooleanHashMap.put(habit, false);
+            chatIdToHabitsMap.put(chatId, habitBooleanHashMap);
         }
-        HashMap<Habit, Boolean> habitBooleanHashMap = new HashMap<>();
-        habitBooleanHashMap.put(habit, false);
-        chatIdToHabitsMap.put(chatId, habitBooleanHashMap);
         return true;
     }
 
@@ -63,7 +64,7 @@ public class HabitsTrackerRepository {
             HashMap<Habit, Boolean> habitBooleanHashMap = chatIdToHabitsMap.get(chatId);
             StringBuilder stringBuilder = new StringBuilder();
             for (Habit habit : habitBooleanHashMap.keySet()) {
-                stringBuilder.append(habit.getName()).append("\n");
+                stringBuilder.append(habit.printValues()).append("\n");
             }
             return stringBuilder.toString();
         }

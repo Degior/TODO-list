@@ -5,8 +5,6 @@ package org.example.Entity;
  * Содержит в себе название привычки, описание, её продолжительность.
  */
 public class Habit {
-    private Long Id;
-    private Long chatId;
     private String name;
     private String description;
     private int dayDuration;
@@ -16,23 +14,6 @@ public class Habit {
         this.description = description;
         this.dayDuration = dayDuration;
     }
-
-    public Long getId() {
-        return Id;
-    }
-
-    public void setId(Long id) {
-        this.Id = id;
-    }
-
-    public Long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
-    }
-
     public String getName() {
         return name;
     }

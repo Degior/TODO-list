@@ -24,7 +24,7 @@ public class Telegram implements MessageSender {
         Scanner scanner = new Scanner(System.in);
         long chatId = 0;
         while (true) {
-            System.out.print("Введите сообщение: ");
+            System.out.print("User: ");
             String input = scanner.nextLine();
             String response = messageHandler.processInput(chatId, input);
             sendMessage(chatId, response);
@@ -40,6 +40,6 @@ public class Telegram implements MessageSender {
      */
     @Override
     public void sendMessage(Long chatId, String message) {
-        System.out.println("Telegram: " + chatId + " " + message);
+        System.out.println("Telegram: " + message);
     }
 }
