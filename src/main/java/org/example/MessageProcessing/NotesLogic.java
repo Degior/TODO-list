@@ -20,8 +20,8 @@ public class NotesLogic {
      /**
       * Метод, добавляющий заметку в список заметок
       */
-    public void addNote(LocalDate date) throws NoteException{
-        noteStorage.appendNote(date);
+    public void addNote(Long chatId, LocalDate date) throws NoteException{
+        noteStorage.appendNote(chatId, date);
     }
      /**
       * Метод, добавляющий текст в заметку
@@ -33,10 +33,10 @@ public class NotesLogic {
      /**
       * Метод, возвращающий названия всех заметок (пока это даты)
       */
-    public String getAllNotes(){
-        if (noteStorage.getAllNotes().size() > 0){
+    public String getAllNotes(Long chatId){
+        if (noteStorage.getAllNotes(chatId).size() > 0){
             String allNotes = "";
-            for (LocalDate date: noteStorage.getAllNotes()){
+            for (LocalDate date: noteStorage.getAllNotes(chatId)){
                 allNotes = allNotes + date + "\n";
             }
             return allNotes;
@@ -48,12 +48,12 @@ public class NotesLogic {
      /**
       * Метод, возвращающий текст заметки
       */
-    public String getNote(LocalDate date) throws NoteException {
-        return noteStorage.getNoteText(date);
+    public String getNote(Long chatId, LocalDate date) throws NoteException {
+        return noteStorage.getNoteText(chatId, date);
     }
 
-    public boolean deleteNote(LocalDate message){
-        if (noteStorage.deleteNote(message)){
+    public boolean deleteNote(Long chatId, LocalDate message){
+        if (noteStorage.deleteNote(chatId, message)){
             return true;
         }
         return false;

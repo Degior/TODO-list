@@ -15,18 +15,20 @@ public class NoteLogicTest {
 
     LocalDate localDate2 = LocalDate.of(LocalDate.now().getYear(), 11, 10);
 
+    Long chatId = 0l;
+
 
     @BeforeEach
     public void setUp() throws NoteException {
-        notesLogic.addNote(localDate);
+        notesLogic.addNote(chatId, localDate);
         notesLogic.addTextToNote("text for first note");
-        notesLogic.addNote(localDate2);
+        notesLogic.addNote(chatId, localDate2);
         notesLogic.addTextToNote("text for second note");
     }
 
     @Test
     public void getAllNotestest(){
-        Assertions.assertEquals("2023-10-10\n2023-11-10\n", notesLogic.getAllNotes());
+        Assertions.assertEquals("2023-10-10\n2023-11-10\n", notesLogic.getAllNotes(chatId));
     }
 
 }

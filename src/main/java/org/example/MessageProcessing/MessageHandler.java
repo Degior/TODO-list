@@ -72,7 +72,7 @@ public class MessageHandler {
             case "/getNotesList":
                 messageHandlerState = MessageHandlerState.DEFAULT;
                 notesLogic.changeLogic();
-                return notesLogic.getAllNotes();
+                return notesLogic.getAllNotes(chatId);
             case "/createNote":
                 messageHandlerState = MessageHandlerState.CREATING_NOTE_DATE;
                 return Report.NOTE_CREATION;
@@ -103,10 +103,10 @@ public class MessageHandler {
 
     private String getNonSpecialCommand(Long chatId, String textMsg) {
         return switch (messageHandlerState) {
-            case CREATING_NOTE_DATE -> appendNote(textMsg);
+            case CREATING_NOTE_DATE -> appendNote(chatId, textMsg);
             case PROCESSING_NOTE -> toProcessExistingNote(textMsg);
-            case SEARCHING_NOTE -> toLookForNote(textMsg);
-            case DELETING_NOTE -> toDeleteNote(textMsg);
+            case SEARCHING_NOTE -> toLookForNote(chatId, textMsg);
+            case DELETING_NOTE -> toDeleteNote(chatId, textMsg);
             case HABIT_ADDING -> addHabit(chatId, textMsg);
             case HABIT_REMOVING -> removeHabit(chatId, textMsg);
             case HABIT_EDITING -> getEditHabit(chatId, textMsg);
@@ -117,9 +117,9 @@ public class MessageHandler {
     }
 
 
-    private String appendNote(String message) {
+    private String appendNote(Long chatId, String message) {
         try {
-            notesLogic.addNote(Filter.toFilterOutData(message));
+            notesLogic.addNote(chatId, Filter.toFilterOutData(message));
             messageHandlerState = MessageHandlerState.PROCESSING_NOTE;
         } catch (NoteException e) {
             return Report.NOTE_ALREADY_EXIST;
@@ -134,10 +134,10 @@ public class MessageHandler {
         return Report.TASK_ADDED;
     }
 
-    private String toLookForNote(String message) {
+    private String toLookForNote(Long chatId, String message) {
         try {
             messageHandlerState = MessageHandlerState.DEFAULT;
-            return notesLogic.getNote(Filter.toFilterOutData(message));
+            return notesLogic.getNote(chatId, Filter.toFilterOutData(message));
         } catch (NoteException e) {
             messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
             return Report.NO_SUCH_NOTE;
@@ -147,11 +147,11 @@ public class MessageHandler {
         }
     }
 
-    private String toDeleteNote(String message) {
+    private String toDeleteNote(Long chatId, String message) {
 
         try {
             messageHandlerState = MessageHandlerState.DEFAULT;
-            if (notesLogic.deleteNote(Filter.toFilterOutData(message))) {
+            if (notesLogic.deleteNote(chatId, Filter.toFilterOutData(message))) {
                 return Report.NOTE_DELETED;
             } else {
                 return Report.NO_SUCH_NOTE;
