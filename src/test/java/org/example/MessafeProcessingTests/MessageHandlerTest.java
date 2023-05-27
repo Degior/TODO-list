@@ -249,4 +249,19 @@ class MessageHandlerTest {
 
         assertEquals("Заметка удалена", result);
     }
+
+    @Test
+    public void OpenNoteTest(){
+        String noteMessage = "12.12";
+
+        messageHandler.processInput(1l, "/createNote");
+        messageHandler.processInput(1l, noteMessage);
+        messageHandler.processInput(1l, "купить цветов");
+        messageHandler.processInput(1l, "украсить дом");
+
+        messageHandler.processInput(1l, "/openNote");
+
+
+        assertEquals("1. купить цветов\n2. украсить дом\n",  messageHandler.processInput(1l, noteMessage));
+    }
 }
