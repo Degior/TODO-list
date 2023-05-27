@@ -10,8 +10,8 @@ public class Filter {
     /**
      * Метод преобразует пользовательский ввод даты в более удобный для работы вид
      * @param message - пользовательский ввод даты
+     * @return localDate - переменная типа LocalDate
      */
-
     public static LocalDate toFilterOutData(String message) throws FilterException {
 
         if (!checkRegex(message)){
@@ -39,7 +39,12 @@ public class Filter {
 
         return localDate;
     }
-
+    /**
+     * Метод преобразует пользовательский ввод даты в более удобный для работы вид
+     * @param message - пользовательский ввод даты
+     * @param symbol - символ-разделитель между месяцем и числом
+     * @return список строк, разделенных по разделителю
+     */
     private static String[] getStringData(String message, char symbol){
         String[] date = new String[]{"00"};
         switch (symbol) {
@@ -55,7 +60,12 @@ public class Filter {
         }
         return date;
     }
-
+    /**
+     * Метод преобразует пользовательский ввод даты в более удобный для работы вид
+     * @param message - пользовательский ввод даты
+     * @return true, если строка прошла валидацию
+     *  @return false, если строка не прошла валидацию
+     */
     private static boolean checkRegex(String message){
         Matcher matcher;
         Pattern pattern = Pattern.compile("\\d{2}\\s\\d{2}");

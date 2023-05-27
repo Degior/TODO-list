@@ -6,7 +6,7 @@ import org.example.Report;
 import org.example.Repository.HabitsTrackerRepository;
 
 /**
- * Класс Logic. Отвечает за логику работы программы.
+ * Класс MessageHandler. Отвечает за логику работы программы.
  */
 public class MessageHandler {
     private final HabitsTrackerRepository habitsTrackerRepository;
@@ -31,10 +31,10 @@ public class MessageHandler {
         return switch (textMsg) {
             case "Начать" -> "/start";
             case "Помощь" -> "/help";
-            case "Список дел" -> "/getNotesList";
-            case "Добавить дело" -> "/createNote";
-            case "Открыть дело" -> "/openNote";
-            case "Удалить дело" -> "/deleteNote";
+            case "Список заметок" -> "/getNotesList";
+            case "Добавить заметку" -> "/createNote";
+            case "Открыть заметку" -> "/openNote";
+            case "Удалить заметку" -> "/deleteNote";
             case "Просмотреть привычки" -> "/showHabit";
             case "Добавить привычку" -> "/addHabit";
             case "Убрать привычку" -> "/removeHabit";

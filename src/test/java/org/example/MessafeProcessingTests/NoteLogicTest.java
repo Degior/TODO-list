@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-public class NoteMessageHandlerTest {
+public class NoteLogicTest {
 
     NotesLogic notesLogic = new NotesLogic();
     LocalDate localDate = LocalDate.of(LocalDate.now().getYear(), 10, 10);

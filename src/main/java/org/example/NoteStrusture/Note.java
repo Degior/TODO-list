@@ -17,13 +17,20 @@ public class Note {
         numOfTasks = 0;
     }
 
-
+    /**
+     * Метод добавляет задачу в заметку
+     * @param text текст задачи
+     */
     public void addTask(String text){
         Task task = new Task(text);
         tasksList.add(task);
         numOfTasks+=1;
     }
 
+    /**
+     * Метод добавляет задачу в заметку
+     * @return текст заметки
+     */
     public String getText(){
         System.out.println();
         String noteText = "";
