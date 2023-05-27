@@ -34,14 +34,15 @@ public class NotesLogic {
       * Метод, возвращающий названия всех заметок (пока это даты)
       */
     public String getAllNotes(Long chatId){
-        if (noteStorage.getAllNotes(chatId).size() > 0){
+        try {
             String allNotes = "";
             for (LocalDate date: noteStorage.getAllNotes(chatId)){
                 allNotes = allNotes + date + "\n";
             }
             return allNotes;
-        }else {
-            return "У вас нет заметок";
+        }
+        catch (NoteException e){
+            return e.getMessage();
         }
     }
 

@@ -15,6 +15,8 @@ public class NoteStorageTest {
 
     Long chatId = 0l;
 
+    Long chatId2 = 2l;
+
     @BeforeEach
     public void setUp(){
         noteStorage = new NoteStorage();
@@ -49,5 +51,10 @@ public class NoteStorageTest {
     public void deleteNoteTest(){
         Assertions.assertEquals(true, noteStorage.deleteNote(chatId, localDate));
 
+    }
+
+    @Test
+    public void deleteNoteWithFail(){
+        Assertions.assertEquals(false, noteStorage.deleteNote(chatId2, localDate));
     }
 }

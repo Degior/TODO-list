@@ -116,7 +116,13 @@ public class MessageHandler {
         };
     }
 
-
+    /**
+     * Метод для добавления заметки.
+     *
+     * @param chatId  идентификатор чата
+     * @param message дата заметки
+     * @return сообщение о результате работы метода
+     */
     private String appendNote(Long chatId, String message) {
         try {
             notesLogic.addNote(chatId, Filter.toFilterOutData(message));
@@ -129,11 +135,24 @@ public class MessageHandler {
         return Report.NOTE_MODIFICATION;
     }
 
+    /**
+     * Метод для добавления задач в заметку.
+     *
+     * @param message текст новой задачи для заметки
+     *                (в заметке несколько задач)
+     * @return сообщение о результате работы метода
+     */
     private String toProcessExistingNote(String message) {
         notesLogic.addTextToNote(message);
         return Report.TASK_ADDED;
     }
 
+    /**
+     * Метод для поиска заметки по дате
+     *
+     * @param message дата заметки
+     * @return сообщение о результате работы метода
+     */
     private String toLookForNote(Long chatId, String message) {
         try {
             messageHandlerState = MessageHandlerState.DEFAULT;
@@ -147,6 +166,13 @@ public class MessageHandler {
         }
     }
 
+    /**
+     * Метод для удаления заметки по дате
+     *
+     * @param chatId  идентификатор чата
+     * @param message дата заметки
+     * @return сообщение о результате работы метода
+     */
     private String toDeleteNote(Long chatId, String message) {
 
         try {

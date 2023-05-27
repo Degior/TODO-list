@@ -1,4 +1,4 @@
-package org.example.MessafeProcessingTests;
+package org.example.NoteStructureTests;
 
 import org.example.MessageProcessing.NotesLogic;
 import org.example.NoteStrusture.NoteException;
@@ -17,6 +17,8 @@ public class NoteLogicTest {
 
     Long chatId = 0l;
 
+    Long chatId2 = 2l;
+
 
     @BeforeEach
     public void setUp() throws NoteException {
@@ -30,5 +32,12 @@ public class NoteLogicTest {
     public void getAllNotestest(){
         Assertions.assertEquals("2023-10-10\n2023-11-10\n", notesLogic.getAllNotes(chatId));
     }
+
+    @Test
+    public void getAllNotesWithoutNotes(){
+        System.out.println("hi");
+        Assertions.assertEquals("У вас нет заметок.", notesLogic.getAllNotes(chatId2));
+    }
+
 
 }

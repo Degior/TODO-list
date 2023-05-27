@@ -1,5 +1,7 @@
 package org.example.NoteStrusture;
 
+import org.example.Report;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +50,12 @@ public class NoteStorage {
     /**
      *Метод возвращающий список всех заметок
      */
-    public Set<LocalDate> getAllNotes(Long chatId){
-        return allNotes.get(chatId).keySet();
+    public Set<LocalDate> getAllNotes(Long chatId) throws NoteException {
+        if (allNotes.containsKey(chatId)){
+            return allNotes.get(chatId).keySet();
+        }
+        throw new NoteException(Report.NO_NOTES);
+
     }
 
     /**
@@ -65,11 +71,6 @@ public class NoteStorage {
             return currentNote.getText();
         }
         throw new NoteException("Заметки с такой датой не существует");
-        /*if (allNotes.containsKey(localDate)){
-            currentNote = allNotes.get(localDate);
-            return currentNote.getText();
-        }
-        throw new NoteException("Заметки с такой датой не существует");*/
     }
     /**
      *Метод удаляющий заметку

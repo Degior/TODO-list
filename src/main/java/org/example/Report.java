@@ -63,4 +63,6 @@ public class Report {
     public static final String NOTE_ALREADY_EXIST = "Такая заметка уже существует. Создайте новую (редактирование во 2 таске)";// Хотите ее дополнить?";
     public static final String NO_SUCH_NOTE = "Такой заметки не существует. Можете попробовать еще раз"; // Сообщение, если заметки не существует
 
+    public static final String NO_NOTES = "У вас нет заметок.";
+
 }
