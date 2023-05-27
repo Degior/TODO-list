@@ -52,8 +52,8 @@ public class NotesLogic {
         return noteStorage.getNoteText(date);
     }
 
-    public boolean deleteNote(){
-        if (noteStorage.deleteNote()){
+    public boolean deleteNote(LocalDate message){
+        if (noteStorage.deleteNote(message)){
             return true;
         }
         return false;

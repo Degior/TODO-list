@@ -25,6 +25,7 @@ public class Note {
     }
 
     public String getText(){
+        System.out.println();
         String noteText = "";
         int counter = 1;
         for (Task task : tasksList){

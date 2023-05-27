@@ -106,6 +106,7 @@ public class MessageHandler {
             case CREATING_NOTE_DATE -> appendNote(textMsg);
             case PROCESSING_NOTE -> toProcessExistingNote(textMsg);
             case SEARCHING_NOTE -> toLookForNote(textMsg);
+            case DELETING_NOTE -> toDeleteNote(textMsg);
             case HABIT_ADDING -> addHabit(chatId, textMsg);
             case HABIT_REMOVING -> removeHabit(chatId, textMsg);
             case HABIT_EDITING -> getEditHabit(chatId, textMsg);
@@ -146,13 +147,18 @@ public class MessageHandler {
         }
     }
 
-    private String toDeleteNote() {
-        messageHandlerState = MessageHandlerState.DEFAULT;
-        System.out.println("/menu /getNotesList");
-        if (notesLogic.deleteNote()) {
-            return Report.NOTE_DELETED;
-        } else {
-            return Report.NO_SUCH_NOTE;
+    private String toDeleteNote(String message) {
+
+        try {
+            messageHandlerState = MessageHandlerState.DEFAULT;
+            if (notesLogic.deleteNote(Filter.toFilterOutData(message))) {
+                return Report.NOTE_DELETED;
+            } else {
+                return Report.NO_SUCH_NOTE;
+            }
+        } catch (FilterException e) {
+            messageHandlerState = MessageHandlerState.DELETING_NOTE;
+            return Report.DEFAULT_MESSAGE;
         }
     }
 

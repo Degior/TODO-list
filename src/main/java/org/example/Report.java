@@ -16,9 +16,11 @@ public class Report {
             /getNotesList
             показать список дел
             /createNote
-            добавить дело
+            добавить заметку на день
             /deleteNote
-            удалить дело
+            удалить заметку
+            /openNote
+            открыть заметку
             /addHabit
             добавить привычку
             /removeHabit
@@ -54,7 +56,7 @@ public class Report {
     public static final String HABIT_MARK_FAIL = "Привычка не отмечена!"; // Сообщение, если привычка не отмечена
     public static final String NOTE_CREATION = "Чтобы создать заметку, укажите дату в формате ДД/MM \n(ДД ММ, ДД.ММ)"; // Сообщение, если пользователь хочет создать заметку
     public static final String NOTE_SEARCH = "Введите название заметки в формате даты.\nУкажите дату в формате либо ДД/ММ (ДД ММ, ДД.ММ)"; // Сообщение, если пользователь хочет найти заметку
-    public static final String DELETE_NOTE = "Вы уверены?"; // Сообщение, если пользователь хочет удалить заметку
+    public static final String DELETE_NOTE = "Введите дату заметки в формате ДД/ММ (ДД ММ, ДД.ММ)"; // Сообщение, если пользователь хочет удалить заметку
     public static final String NOTE_DELETED = "Заметка удалена"; // Сообщение, если заметка удалена
     public static final String NOTE_MODIFICATION = "Теперь можешь внести в план на день несколько задач через Enter. \n"; // Сообщение, если пользователь хочет изменить заметку
     public static final String TASK_ADDED = "Задача добавлена"; // Сообщение, если задача добавлена
