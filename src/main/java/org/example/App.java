@@ -1,7 +1,6 @@
 package org.example;
 
 import org.example.MessageProcessing.MessageHandler;
-import org.example.Repository.HabitsTrackerRepository;
 import org.example.Telegram.Telegram;
 
 /**
@@ -13,8 +12,7 @@ public class App {
     }
 
     private static void run() {
-        HabitsTrackerRepository habitsTrackerRepository = new HabitsTrackerRepository();
-        MessageHandler messageHandler = new MessageHandler(habitsTrackerRepository);
+        MessageHandler messageHandler = new MessageHandler();
         Telegram telegram = new Telegram(messageHandler);
         telegram.onUpdateReceived();
     }

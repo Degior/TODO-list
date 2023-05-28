@@ -8,7 +8,7 @@ import java.util.List;
  * Хранит несколько Task'ов - дел на этот день
  */
 public class Note {
-    private List<Task> tasksList;
+    private final List<Task> tasksList;
 
     private int numOfTasks;
 
@@ -33,13 +33,21 @@ public class Note {
      */
     public String getText(){
         System.out.println();
-        String noteText = "";
+        StringBuilder noteText = new StringBuilder();
         int counter = 1;
-        for (Task task : tasksList){
-            noteText += counter + ". " + task.getDescription() + "\n";
+        for (Task task : tasksList) {
+            noteText.append(counter).append(". ").append(task.getDescription()).append("\n");
             counter++;
         }
-        return noteText;
+        return noteText.toString();
     }
 
+    public void deleteTask(int index) {
+        tasksList.remove(index - 1);
+        numOfTasks -= 1;
+    }
+
+    public void markTask(int index) {
+        tasksList.get(index - 1).chahgeState();
+    }
 }

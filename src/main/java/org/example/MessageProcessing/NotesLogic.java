@@ -54,10 +54,7 @@ public class NotesLogic {
     }
 
     public boolean deleteNote(Long chatId, LocalDate message){
-        if (noteStorage.deleteNote(chatId, message)){
-            return true;
-        }
-        return false;
+        return noteStorage.deleteNote(chatId, message);
     }
 
      /**
@@ -65,5 +62,13 @@ public class NotesLogic {
       */
      public void changeLogic() {
         noteStorage.resetNote();
+     }
+
+     public void deleteTextFromNote(int index) {
+         noteStorage.deleteTextFromNote(index);
+     }
+
+     public void markNote(int index) {
+         noteStorage.markNote(index);
      }
  }

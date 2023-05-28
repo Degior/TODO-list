@@ -1,24 +1,14 @@
 package org.example.MessageProcessing;
 
-import org.example.Entity.Habit;
 import org.example.NoteStrusture.NoteException;
 import org.example.Report;
-import org.example.Repository.HabitsTrackerRepository;
 
 /**
  * Класс MessageHandler. Отвечает за логику работы программы.
  */
 public class MessageHandler {
-    private final HabitsTrackerRepository habitsTrackerRepository;
     private NotesLogic notesLogic = new NotesLogic();
-
     private MessageHandlerState messageHandlerState = MessageHandlerState.DEFAULT;
-
-    public MessageHandler(HabitsTrackerRepository habitsTrackerRepository) {
-        this.habitsTrackerRepository = habitsTrackerRepository;
-    }
-
-    private String nameHabitThatUserWantsToEdit = null;
 
     /**
      * Замена сообщений на специальные команды
@@ -35,11 +25,8 @@ public class MessageHandler {
             case "Добавить заметку" -> "/createNote";
             case "Открыть заметку" -> "/openNote";
             case "Удалить заметку" -> "/deleteNote";
-            case "Просмотреть привычки" -> "/showHabit";
-            case "Добавить привычку" -> "/addHabit";
-            case "Убрать привычку" -> "/removeHabit";
-            case "Редактировать привычку" -> "/editHabit";
-            case "Отметить выполнение" -> "/markHabit";
+            case "Редактировать заметку" -> "/editNote";
+            case "Отмена" -> "/cancel";
             default -> textMsg;
         };
     }
@@ -82,21 +69,9 @@ public class MessageHandler {
             case "/deleteNote":
                 messageHandlerState = MessageHandlerState.DELETING_NOTE;
                 return Report.DELETE_NOTE;
-            case "/addHabit":
-                messageHandlerState = MessageHandlerState.HABIT_ADDING;
-                return Report.HABIT_ADD;
-            case "/removeHabit":
-                messageHandlerState = MessageHandlerState.HABIT_REMOVING;
-                return Report.HABIT_REMOVE;
-            case "/showHabit":
-                messageHandlerState = MessageHandlerState.DEFAULT;
-                return showHabits(chatId);
-            case "/editHabit":
-                messageHandlerState = MessageHandlerState.HABIT_EDITING;
-                return Report.HABIT_EDIT;
-            case "/markHabit":
-                messageHandlerState = MessageHandlerState.HABIT_MARKING;
-                return Report.HABIT_MARK;
+            case "/editNote":
+                messageHandlerState = MessageHandlerState.EDITING_NOTE;
+                return Report.EDIT_NOTE;
             case "/cancel":
                 messageHandlerState = MessageHandlerState.DEFAULT;
                 return Report.CANCEL;
@@ -105,23 +80,48 @@ public class MessageHandler {
         }
     }
 
-    private String showHabits(Long chatId) {
-        return habitsTrackerRepository.getHabits(chatId);
-    }
-
     private String getNonSpecialCommand(Long chatId, String textMsg) {
         return switch (messageHandlerState) {
             case CREATING_NOTE_DATE -> appendNote(chatId, textMsg);
             case PROCESSING_NOTE -> toProcessExistingNote(textMsg);
             case SEARCHING_NOTE -> toLookForNote(chatId, textMsg);
             case DELETING_NOTE -> toDeleteNote(chatId, textMsg);
-            case HABIT_ADDING -> addHabit(chatId, textMsg);
-            case HABIT_REMOVING -> removeHabit(chatId, textMsg);
-            case HABIT_EDITING -> getEditHabit(chatId, textMsg);
-            case HABIT_EDITING_GETTER -> editHabit(chatId, textMsg);
-            case HABIT_MARKING -> markHabit(chatId, textMsg);
+            case EDITING_NOTE -> toEditNote(chatId, textMsg);
+            case PROCESSING_EDITING_NOTE -> editNote(chatId, textMsg);
             default -> Report.DEFAULT_MESSAGE;
         };
+    }
+
+    private String editNote(Long chatId, String textMsg) {
+        try {
+            if (textMsg.startsWith("Добавить")) {
+                notesLogic.addTextToNote(textMsg.substring(9));
+                return Report.TASK_ADDED;
+            } else if (textMsg.startsWith("Удалить")) {
+                notesLogic.deleteTextFromNote(Integer.parseInt(textMsg.substring(8)));
+                return Report.DELETED_TASK;
+            } else if (textMsg.startsWith("Отметить выполненным")) {
+                notesLogic.markNote(Integer.parseInt(textMsg.substring(21)));
+                messageHandlerState = MessageHandlerState.PROCESSING_NOTE;
+                return Report.NOTE_EDITED;
+            } else {
+                return Report.WRONG_COMMAND;
+            }
+        } catch (Exception e) {
+            return Report.WRONG_COMMAND;
+        }
+    }
+
+    private String toEditNote(Long chatId, String textMsg) {
+        try {
+            messageHandlerState = MessageHandlerState.PROCESSING_EDITING_NOTE;
+
+            return notesLogic.getNote(chatId, Filter.toFilterOutData(textMsg)) + Report.NOTE_EDITING;
+        } catch (NoteException e) {
+            return e.getMessage();
+        } catch (FilterException e) {
+            return Report.WRONG_DATE;
+        }
     }
 
     /**
@@ -142,7 +142,6 @@ public class MessageHandler {
         }
         return Report.NOTE_MODIFICATION;
     }
-
     /**
      * Метод для добавления задач в заметку.
      *
@@ -194,121 +193,5 @@ public class MessageHandler {
             messageHandlerState = MessageHandlerState.DELETING_NOTE;
             return Report.DEFAULT_MESSAGE;
         }
-    }
-
-    /**
-     * Метод для добавления привычки.
-     *
-     * @param chatId  идентификатор чата
-     * @param textMsg сообщение
-     */
-    private String addHabit(Long chatId, String textMsg) {
-        String[] habitContains = textMsg.split(";");
-        if (habitContains.length == 3) {
-            String habitName = habitContains[0];
-            String habitDescription = habitContains[1];
-            String habitDayDurationString = habitContains[2];
-            int habitDayDurationInt;
-            try {
-                habitDayDurationInt = Integer.parseInt(habitDayDurationString.trim());
-            } catch (NumberFormatException e) {
-                return Report.HABIT_ADD_FAIL;
-            }
-            Habit habit = new Habit(habitName, habitDescription, habitDayDurationInt);
-            if (habitsTrackerRepository.addHabit(chatId, habit)) {
-                messageHandlerState = MessageHandlerState.DEFAULT;
-                return Report.HABIT_ADD_SUCCESS;
-            }
-        }
-        return Report.HABIT_ADD_FAIL;
-    }
-
-    /**
-     * Метод для удаления привычки.
-     *
-     * @param chatId  идентификатор чата
-     * @param textMsg сообщение
-     */
-    private String removeHabit(Long chatId, String textMsg) {
-        if (habitsTrackerRepository.removeHabit(chatId, textMsg)) {
-            return Report.HABIT_REMOVE_SUCCESS;
-        }
-        return Report.HABIT_REMOVE_FAIL;
-    }
-
-    /**
-     * Метод для начала редактирования привычки.
-     *
-     * @param chatId    идентификатор чата
-     * @param habitName название привычки
-     */
-    private String getEditHabit(Long chatId, String habitName) {
-        if (habitsTrackerRepository.checkHabit(chatId, habitName)) {
-            messageHandlerState = MessageHandlerState.HABIT_EDITING_GETTER;
-            nameHabitThatUserWantsToEdit = habitName;
-            return Report.HABIT_EDIT_GETTER;
-        }
-        return Report.HABIT_EDIT_FAIL1;
-    }
-
-    /**
-     * Метод для редактирования привычки.
-     *
-     * @param chatId  идентификатор чата
-     * @param message сообщение
-     */
-    private String editHabit(Long chatId, String message) {
-        String[] lines = message.split(";");
-        String name = null;
-        String description = null;
-        int duration = -1;
-
-        for (String line : lines) {
-            if (line.startsWith("Название:")) {
-                name = extractValue(line);
-            } else if (line.startsWith("Описание:")) {
-                description = extractValue(line);
-            } else if (line.startsWith("Продолжительность:")) {
-                duration = extractDurationValue(line);
-            }
-        }
-        if (name == null && description == null && duration < 0) {
-            return Report.HABIT_EDIT_FAIL2;
-        }
-        habitsTrackerRepository.editHabit(chatId, nameHabitThatUserWantsToEdit, name, description, duration);
-        return Report.HABIT_EDIT_SUCCESS;
-    }
-
-    private String extractValue(String line) {
-        return line.substring(line.indexOf(":") + 1).trim();
-    }
-
-    private int extractDurationValue(String line) {
-        try {
-            return Integer.parseInt(line.substring(line.indexOf(":") + 1).trim());
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
-
-    /**
-     * Метод для отметки выполнения привычки.
-     *
-     * @param chatId  идентификатор чата
-     * @param textMsg сообщение
-     */
-    private String markHabit(Long chatId, String textMsg) {
-        if (habitsTrackerRepository.markHabit(chatId, textMsg)) {
-            return Report.HABIT_MARK_SUCCESS;
-        }
-        return Report.HABIT_MARK_FAIL;
-    }
-
-    private void setMessageHandlerStateToDefault(Long chatId) {
-        messageHandlerState = MessageHandlerState.DEFAULT;
-    }
-
-    public MessageHandlerState getMessageHandlerState() {
-        return messageHandlerState;
     }
 }

@@ -23,35 +23,42 @@ public class NoteStorage {
 
     /**
      * Метод создающий заметку по дате
+     *
+     * @param chatId    - id чата, в котором создается заметка
+     * @param localDate - дата, на которую создается заметка
+     * @throws NoteException - если заметка уже существует
      */
     public void appendNote(Long chatId, LocalDate localDate)throws NoteException{
         Map<LocalDate, Note> currentMap;
-        if (allNotes.containsKey(chatId)){
+        if (allNotes.containsKey(chatId)) {
             currentMap = allNotes.get(chatId);
-            if (currentMap.containsKey(localDate)){
+            if (currentMap.containsKey(localDate)) {
                 throw new NoteException("Такая заметка уже есть");
             }
             allNotes.get(chatId).put(localDate, new Note());
-            currentNote = currentMap.get(localDate);
-        }
-        else {
+        } else {
             currentMap = new HashMap<>();
             currentMap.put(localDate, new Note());
             allNotes.put(chatId, currentMap);
-            currentNote = currentMap.get(localDate);
         }
+        currentNote = currentMap.get(localDate);
 
     }
 
-    public void fillNote(String tasks){
+    /**
+     * Метод добавляющий задачу в текущую заметку
+     *
+     * @param tasks - задача, которую нужно добавить
+     */
+    public void fillNote(String tasks) {
         currentNote.addTask(tasks);
     }
 
     /**
-     *Метод возвращающий список всех заметок
+     * Метод возвращающий список всех заметок
      */
     public Set<LocalDate> getAllNotes(Long chatId) throws NoteException {
-        if (allNotes.containsKey(chatId)){
+        if (allNotes.containsKey(chatId)) {
             return allNotes.get(chatId).keySet();
         }
         throw new NoteException(Report.NO_NOTES);
@@ -60,25 +67,29 @@ public class NoteStorage {
 
     /**
      *Метод возвращающий задачи из заметки
+     *
+     * @param chatId - id чата, в котором создается заметка
+     * @param localDate - дата, на которую создается заметка
+     * @return список задач
      */
     public String getNoteText(Long chatId, LocalDate localDate) throws NoteException{
         if (!allNotes.containsKey(chatId)){
-            throw new NoteException("Заметки с такой датой не существует");
+            throw new NoteException(Report.NO_SUCH_NOTE);
         }
         Map<LocalDate, Note> currentMap = allNotes.get(chatId);
         if (currentMap.containsKey(localDate)){
             currentNote = currentMap.get(localDate);
             return currentNote.getText();
         }
-        throw new NoteException("Заметки с такой датой не существует");
+        throw new NoteException(Report.NO_SUCH_NOTE);
     }
+
     /**
-     *Метод удаляющий заметку
-     * @return true, если заметка успешно удалена
-     * @return false, если заметки по такой дате не существует
+     * Метод удаляющий заметку
+     *
+     * @return true, если заметка успешно удалена, false, если заметки по такой дате не существует
      */
     public boolean deleteNote(Long chatId, LocalDate localDate){
-
         if (!allNotes.containsKey(chatId)){
             return false;
         }
@@ -97,4 +108,21 @@ public class NoteStorage {
         currentNote = null;
     }
 
+    /**
+     * Метод, который удаляет задачу из текущей заметки
+     *
+     * @param index - индекс задачи, которую нужно удалить
+     */
+    public void deleteTextFromNote(int index) {
+        currentNote.deleteTask(index);
+    }
+
+    /**
+     * Метод, помечающий задачу из текущей заметки как выполненную
+     *
+     * @param index - индекс задачи, которую нужно пометить
+     */
+    public void markNote(int index) {
+        currentNote.markTask(index);
+    }
 }
