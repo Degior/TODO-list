@@ -33,7 +33,7 @@ public class NoteStorage {
         if (allNotes.containsKey(chatId)) {
             currentMap = allNotes.get(chatId);
             if (currentMap.containsKey(localDate)) {
-                throw new NoteException("Такая заметка уже есть");
+                throw new NoteException(Report.NOTE_ALREADY_EXIST);
             }
             allNotes.get(chatId).put(localDate, new Note());
         } else {
@@ -113,7 +113,7 @@ public class NoteStorage {
      *
      * @param index - индекс задачи, которую нужно удалить
      */
-    public void deleteTextFromNote(int index) {
+    public void deleteTextFromNote(int index) throws NoteException{
         currentNote.deleteTask(index);
     }
 

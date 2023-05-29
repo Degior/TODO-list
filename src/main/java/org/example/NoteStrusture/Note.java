@@ -1,5 +1,7 @@
 package org.example.NoteStrusture;
 
+import org.example.Report;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,6 @@ public class Note {
 
     public Note(){
         tasksList = new ArrayList<>();
-        numOfTasks = 0;
     }
 
     /**
@@ -24,7 +25,6 @@ public class Note {
     public void addTask(String text){
         Task task = new Task(text);
         tasksList.add(task);
-        numOfTasks+=1;
     }
 
     /**
@@ -36,15 +36,23 @@ public class Note {
         StringBuilder noteText = new StringBuilder();
         int counter = 1;
         for (Task task : tasksList) {
-            noteText.append(counter).append(". ").append(task.getDescription()).append("\n");
+            if (task.getState() == TaskState.DONE){
+                noteText.append("V ").append(task.getDescription()).append("\n");
+            }
+            else {
+                noteText.append(counter).append(". ").append(task.getDescription()).append("\n");
+            }
+
             counter++;
         }
         return noteText.toString();
     }
 
-    public void deleteTask(int index) {
+    public void deleteTask(int index) throws NoteException {
+        if (tasksList.size() < index){
+            throw new NoteException(Report.WRONG_TASK_INDEX);
+        }
         tasksList.remove(index - 1);
-        numOfTasks -= 1;
     }
 
     public void markTask(int index) {

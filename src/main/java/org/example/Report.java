@@ -48,4 +48,8 @@ public class Report {
     public static final String DELETED_TASK = "Задача удалена"; // Сообщение, если задача удалена
     public static final String NOTE_EDITED = "Заметка отмечена выполненной"; // Сообщение, если заметка отредактирована
     public static final String WRONG_COMMAND = "Неверная команда. Попробуйте еще раз"; // Сообщение, если пользователь ввел неверную команду
+
+    public static final String WRONG_INPUT = "Неверный формат ввода. Попробуйте еще раз";
+
+    public static final String WRONG_TASK_INDEX = "Задачи с таким номером не существует";
 }

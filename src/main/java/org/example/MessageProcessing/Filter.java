@@ -1,5 +1,7 @@
 package org.example.MessageProcessing;
 
+import org.example.Report;
+
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.regex.Matcher;
@@ -15,7 +17,7 @@ public class Filter {
     public static LocalDate toFilterOutData(String message) throws FilterException {
 
         if (!checkRegex(message)){
-            throw new FilterException("Неверный формат ввода");
+            throw new FilterException(Report.WRONG_INPUT);
         }
         char symbol;
         String[] date;
@@ -34,7 +36,7 @@ public class Filter {
                     dateMonth[1],
                     dateMonth[0]);
         }catch (DateTimeException e){
-            throw new FilterException("Неверный формат ввода");
+            throw new FilterException(Report.WRONG_DATE);
         }
 
         return localDate;

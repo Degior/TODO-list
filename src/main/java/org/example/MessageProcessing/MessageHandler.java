@@ -98,8 +98,14 @@ public class MessageHandler {
                 notesLogic.addTextToNote(textMsg.substring(9));
                 return Report.TASK_ADDED;
             } else if (textMsg.startsWith("Удалить")) {
-                notesLogic.deleteTextFromNote(Integer.parseInt(textMsg.substring(8)));
-                return Report.DELETED_TASK;
+                try {
+                    notesLogic.deleteTextFromNote(Integer.parseInt(textMsg.substring(8)));
+                    return Report.DELETED_TASK;
+                }
+                catch (NoteException e){
+                    return e.getMessage();
+                }
+
             } else if (textMsg.startsWith("Отметить выполненным")) {
                 notesLogic.markNote(Integer.parseInt(textMsg.substring(21)));
                 messageHandlerState = MessageHandlerState.PROCESSING_NOTE;
@@ -115,12 +121,13 @@ public class MessageHandler {
     private String toEditNote(Long chatId, String textMsg) {
         try {
             messageHandlerState = MessageHandlerState.PROCESSING_EDITING_NOTE;
-
             return notesLogic.getNote(chatId, Filter.toFilterOutData(textMsg)) + Report.NOTE_EDITING;
         } catch (NoteException e) {
+            messageHandlerState = MessageHandlerState.EDITING_NOTE;
             return e.getMessage();
         } catch (FilterException e) {
-            return Report.WRONG_DATE;
+            messageHandlerState = MessageHandlerState.EDITING_NOTE;
+            return e.getMessage();
         }
     }
 
@@ -136,9 +143,9 @@ public class MessageHandler {
             notesLogic.addNote(chatId, Filter.toFilterOutData(message));
             messageHandlerState = MessageHandlerState.PROCESSING_NOTE;
         } catch (NoteException e) {
-            return Report.NOTE_ALREADY_EXIST;
+            return e.getMessage();
         } catch (FilterException e) {
-            return Report.DEFAULT_MESSAGE;
+            return e.getMessage();
         }
         return Report.NOTE_MODIFICATION;
     }
@@ -166,10 +173,10 @@ public class MessageHandler {
             return notesLogic.getNote(chatId, Filter.toFilterOutData(message));
         } catch (NoteException e) {
             messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
-            return Report.NO_SUCH_NOTE;
+            return e.getMessage();
         } catch (FilterException e) {
             messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
-            return Report.DEFAULT_MESSAGE;
+            return e.getMessage();
         }
     }
 
@@ -191,7 +198,7 @@ public class MessageHandler {
             }
         } catch (FilterException e) {
             messageHandlerState = MessageHandlerState.DELETING_NOTE;
-            return Report.DEFAULT_MESSAGE;
+            return e.getMessage();
         }
     }
 }

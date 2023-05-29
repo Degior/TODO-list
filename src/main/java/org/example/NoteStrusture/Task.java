@@ -24,4 +24,6 @@ public class Task {
         return description;
     }
 
+    public TaskState getState(){return state;}
+
 }

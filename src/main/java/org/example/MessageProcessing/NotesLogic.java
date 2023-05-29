@@ -64,8 +64,9 @@ public class NotesLogic {
         noteStorage.resetNote();
      }
 
-     public void deleteTextFromNote(int index) {
+     public void deleteTextFromNote(int index) throws NoteException {
          noteStorage.deleteTextFromNote(index);
+
      }
 
      public void markNote(int index) {
