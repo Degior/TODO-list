@@ -92,6 +92,13 @@ public class MessageHandler {
         };
     }
 
+    /**
+     * Метод для редактирования заметки
+     *
+     * @param chatId  идентификатор чата
+     * @param textMsg сообщение о виде редактирования (удаление, добавление, выполнение задачи)
+     * @return сообщение о результате работы метода
+     */
     private String editNote(Long chatId, String textMsg) {
         try {
             if (textMsg.startsWith("Добавить")) {
@@ -118,6 +125,13 @@ public class MessageHandler {
         }
     }
 
+    /**
+     * Метод для редактирования заметки
+     *
+     * @param chatId  идентификатор чата
+     * @param textMsg дата заметки
+     * @return сообщение о результате работы метода
+     */
     private String toEditNote(Long chatId, String textMsg) {
         try {
             messageHandlerState = MessageHandlerState.PROCESSING_EDITING_NOTE;
