@@ -56,6 +56,7 @@ public class NoteStorage {
 
     /**
      * Метод возвращающий список всех заметок
+     * @throws NoteException формирует сообщение пользователю
      */
     public Set<LocalDate> getAllNotes(Long chatId) throws NoteException {
         if (allNotes.containsKey(chatId)) {
@@ -72,16 +73,16 @@ public class NoteStorage {
      * @param localDate - дата, на которую создается заметка
      * @return список задач
      */
-    public String getNoteText(Long chatId, LocalDate localDate) throws NoteException{
+    public Note getNote(Long chatId, LocalDate localDate){
         if (!allNotes.containsKey(chatId)){
-            throw new NoteException(Report.NO_SUCH_NOTE);
+            return null;
         }
         Map<LocalDate, Note> currentMap = allNotes.get(chatId);
         if (currentMap.containsKey(localDate)){
             currentNote = currentMap.get(localDate);
-            return currentNote.getText();
+            return currentNote;
         }
-        throw new NoteException(Report.NO_SUCH_NOTE);
+        return null;
     }
 
     /**

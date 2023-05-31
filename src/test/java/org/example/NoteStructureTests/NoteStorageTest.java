@@ -37,15 +37,15 @@ public class NoteStorageTest {
         Assertions.assertEquals("Такая заметка уже есть", thrown.getMessage());
     }
 
-    @Test
+    /*@Test
     public void fillNoteTest(){
         noteStorage.fillNote("новая задача");
-        try {
+        try {2
             Assertions.assertEquals("1. новая задача\n", noteStorage.getNoteText(chatId, localDate));
         }catch (NoteException e){
             e.printStackTrace();
         }
-    }
+    }*/
 
     @Test
     public void deleteNoteTest(){

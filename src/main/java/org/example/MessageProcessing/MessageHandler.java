@@ -185,9 +185,6 @@ public class MessageHandler {
         try {
             messageHandlerState = MessageHandlerState.DEFAULT;
             return notesLogic.getNote(chatId, Filter.toFilterOutData(message));
-        } catch (NoteException e) {
-            messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
-            return e.getMessage();
         } catch (FilterException e) {
             messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
             return e.getMessage();

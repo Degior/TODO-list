@@ -1,7 +1,9 @@
 package org.example.MessageProcessing;
 
+import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.NoteException;
 import org.example.NoteStrusture.NoteStorage;
+import org.example.Report;
 
 import java.time.LocalDate;
 
@@ -12,8 +14,11 @@ public class NotesLogic {
 
     private NoteStorage noteStorage;
 
+    //private NoteFormatter noteFormatter;
+
     public NotesLogic(){
         noteStorage = new NoteStorage();
+        //noteFormatter = new NoteFormatter();
     }
 
 
@@ -49,8 +54,13 @@ public class NotesLogic {
      /**
       * Метод, возвращающий текст заметки
       */
-    public String getNote(Long chatId, LocalDate date) throws NoteException {
-        return noteStorage.getNoteText(chatId, date);
+    public String getNote(Long chatId, LocalDate date){
+        Note note = noteStorage.getNote(chatId, date);
+        String noteText = NoteFormatter.getNoteText(note);
+        if (noteText.equals("")){
+            return Report.NO_SUCH_NOTE;
+        }
+        return noteText;
     }
 
     public boolean deleteNote(Long chatId, LocalDate message){
