@@ -48,11 +48,13 @@ public class Note {
         return noteText.toString();
     }
 
-    public void deleteTask(int index) throws NoteException {
+    public boolean deleteTask(int index){
         if (tasksList.size() < index){
-            throw new NoteException(Report.WRONG_TASK_INDEX);
+            return false;
+            //throw new NoteException(Report.WRONG_TASK_INDEX);
         }
         tasksList.remove(index - 1);
+        return true;
     }
 
     public void markTask(int index) {

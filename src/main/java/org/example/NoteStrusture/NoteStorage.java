@@ -1,6 +1,7 @@
 package org.example.NoteStrusture;
 
 import org.example.Report;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -28,12 +29,12 @@ public class NoteStorage {
      * @param localDate - дата, на которую создается заметка
      * @throws NoteException - если заметка уже существует
      */
-    public void appendNote(Long chatId, LocalDate localDate)throws NoteException{
+    public boolean addNote(Long chatId, LocalDate localDate){
         Map<LocalDate, Note> currentMap;
         if (allNotes.containsKey(chatId)) {
             currentMap = allNotes.get(chatId);
             if (currentMap.containsKey(localDate)) {
-                throw new NoteException(Report.NOTE_ALREADY_EXIST);
+                return false;
             }
             allNotes.get(chatId).put(localDate, new Note());
         } else {
@@ -42,7 +43,7 @@ public class NoteStorage {
             allNotes.put(chatId, currentMap);
         }
         currentNote = currentMap.get(localDate);
-
+        return true;
     }
 
     /**
@@ -50,7 +51,7 @@ public class NoteStorage {
      *
      * @param tasks - задача, которую нужно добавить
      */
-    public void fillNote(String tasks) {
+    public void addTaskToNote(String tasks) {
         currentNote.addTask(tasks);
     }
 
@@ -58,11 +59,13 @@ public class NoteStorage {
      * Метод возвращающий список всех заметок
      * @throws NoteException формирует сообщение пользователю
      */
-    public Set<LocalDate> getAllNotes(Long chatId) throws NoteException {
+
+    @Nullable
+    public Set<LocalDate> getAllNotes(Long chatId){
         if (allNotes.containsKey(chatId)) {
             return allNotes.get(chatId).keySet();
         }
-        throw new NoteException(Report.NO_NOTES);
+        return null;
 
     }
 
@@ -73,6 +76,8 @@ public class NoteStorage {
      * @param localDate - дата, на которую создается заметка
      * @return список задач
      */
+
+    @Nullable
     public Note getNote(Long chatId, LocalDate localDate){
         if (!allNotes.containsKey(chatId)){
             return null;
@@ -114,8 +119,8 @@ public class NoteStorage {
      *
      * @param index - индекс задачи, которую нужно удалить
      */
-    public void deleteTextFromNote(int index) throws NoteException{
-        currentNote.deleteTask(index);
+    public boolean deleteTextFromNote(int index){
+        return currentNote.deleteTask(index);
     }
 
     /**
@@ -123,7 +128,7 @@ public class NoteStorage {
      *
      * @param index - индекс задачи, которую нужно пометить
      */
-    public void markNote(int index) {
+    public void markNoteAsCompleted(int index) {
         currentNote.markTask(index);
     }
 }

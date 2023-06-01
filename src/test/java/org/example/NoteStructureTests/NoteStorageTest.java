@@ -1,5 +1,7 @@
 package org.example.NoteStructureTests;
 
+import org.example.MessageProcessing.FormatterException;
+import org.example.MessageProcessing.NoteFormatter;
 import org.example.NoteStrusture.NoteException;
 import org.example.NoteStrusture.NoteStorage;
 import org.junit.jupiter.api.Assertions;
@@ -21,31 +23,21 @@ public class NoteStorageTest {
     public void setUp(){
         noteStorage = new NoteStorage();
         localDate = LocalDate.of(LocalDate.now().getYear(), 10, 10);
-        try {
-            noteStorage.appendNote(chatId, localDate);
-        }catch (NoteException e){
-            e.printStackTrace();
-        }
+
+        noteStorage.addNote(chatId, localDate);
     }
 
     @Test
     public void appendNoteWithException(){
-        NoteException thrown = Assertions.assertThrows(NoteException.class, () -> {
-            noteStorage.appendNote(chatId, localDate);
-        });
 
-        Assertions.assertEquals("Такая заметка уже есть", thrown.getMessage());
+        Assertions.assertEquals(false, noteStorage.addNote(chatId, localDate));
     }
 
-    /*@Test
-    public void fillNoteTest(){
-        noteStorage.fillNote("новая задача");
-        try {2
-            Assertions.assertEquals("1. новая задача\n", noteStorage.getNoteText(chatId, localDate));
-        }catch (NoteException e){
-            e.printStackTrace();
-        }
-    }*/
+    @Test
+    public void fillNoteTest() throws FormatterException {
+        noteStorage.addTaskToNote("новая задача");
+        Assertions.assertEquals("1. новая задача\n", NoteFormatter.getNoteText(noteStorage.getNote(chatId, localDate)));
+    }
 
     @Test
     public void deleteNoteTest(){
