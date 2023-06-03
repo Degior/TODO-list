@@ -16,6 +16,9 @@ public class Task {
         this.description = description;
     }
 
+    /**
+     * Метод помечающий задачу как выполненную
+     */
     public void chahgeState(){
         state = TaskState.DONE;
     }

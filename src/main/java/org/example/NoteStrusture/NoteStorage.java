@@ -27,7 +27,6 @@ public class NoteStorage {
      *
      * @param chatId    - id чата, в котором создается заметка
      * @param localDate - дата, на которую создается заметка
-     * @throws NoteException - если заметка уже существует
      */
     public boolean addNote(Long chatId, LocalDate localDate){
         Map<LocalDate, Note> currentMap;
@@ -56,8 +55,10 @@ public class NoteStorage {
     }
 
     /**
-     * Метод возвращающий список всех заметок
-     * @throws NoteException формирует сообщение пользователю
+     * Метод возвращающий список всех заметок пользователя
+     *
+     * @param chatId id чата пользователя
+     * @return список дат всех существующих заметок
      */
 
     @Nullable
@@ -129,6 +130,6 @@ public class NoteStorage {
      * @param index - индекс задачи, которую нужно пометить
      */
     public void markNoteAsCompleted(int index) {
-        currentNote.markTask(index);
+        currentNote.markTaskAsCompleted(index);
     }
 }

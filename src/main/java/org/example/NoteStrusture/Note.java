@@ -12,8 +12,6 @@ import java.util.List;
 public class Note {
     private final List<Task> tasksList;
 
-    private int numOfTasks;
-
     public Note(){
         tasksList = new ArrayList<>();
     }
@@ -28,7 +26,7 @@ public class Note {
     }
 
     /**
-     * Метод добавляет задачу в заметку
+     * Метод для получения текста заметки
      * @return текст заметки
      */
     public String getText(){
@@ -48,16 +46,25 @@ public class Note {
         return noteText.toString();
     }
 
+    /**
+     * Метод для удаления одной задачи по ее номеру
+     * @param index номер заметки, начиная с 0
+     * @return true если заметка успешно удалена
+     */
     public boolean deleteTask(int index){
         if (tasksList.size() < index){
             return false;
-            //throw new NoteException(Report.WRONG_TASK_INDEX);
         }
         tasksList.remove(index - 1);
         return true;
     }
 
-    public void markTask(int index) {
+    /**
+     * Метод помечающий задачу как выполненную
+     * @param index номер заметки, начиная с 0
+     */
+
+    public void markTaskAsCompleted(int index) {
         tasksList.get(index - 1).chahgeState();
     }
 }
