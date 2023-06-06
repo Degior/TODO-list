@@ -1,8 +1,7 @@
 package org.example.MessafeProcessingTests;
 
 import org.example.MessageProcessing.MessageHandler;
-import org.example.MessageProcessing.MessageHandlerState;
-import org.example.Report;
+import org.example.MessageProcessing.NotificationRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,7 @@ class MessageHandlerTest {
 
     @BeforeEach
     void setUp() {
-        messageHandler = new MessageHandler();
+        messageHandler = new MessageHandler(new NotificationRepository());
     }
 
     @Test

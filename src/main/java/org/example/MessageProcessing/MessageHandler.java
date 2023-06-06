@@ -4,12 +4,20 @@ import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.NoteStorage;
 import org.example.Report;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Класс MessageHandler. Отвечает за логику работы программы.
  */
 public class MessageHandler {
 
-    private NoteStorage noteStorage = new NoteStorage();
+    private final NoteStorage noteStorage = new NoteStorage();
+    private final NotificationRepository notificationRepository;
+
+    public MessageHandler(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
+    }
 
     private MessageHandlerState messageHandlerState = MessageHandlerState.DEFAULT;
 
@@ -19,7 +27,6 @@ public class MessageHandler {
      * @param textMsg сообщение
      * @return специальная команда
      */
-
     private String handle(String textMsg) {
         return switch (textMsg) {
             case "Начать" -> "/start";
@@ -79,6 +86,9 @@ public class MessageHandler {
             case "/editNote":
                 messageHandlerState = MessageHandlerState.EDITING_NOTE;
                 return Report.EDIT_NOTE;
+            case "/addNotification":
+                messageHandlerState = MessageHandlerState.ADDING_NOTIFICATION;
+                return Report.ADDING_NOTIFICATION;
             case "/cancel":
                 messageHandlerState = MessageHandlerState.DEFAULT;
                 return Report.CANCEL;
@@ -94,9 +104,29 @@ public class MessageHandler {
             case SEARCHING_NOTE -> toLookForNote(chatId, textMsg);
             case DELETING_NOTE -> toDeleteNote(chatId, textMsg);
             case EDITING_NOTE -> toEditNote(chatId, textMsg);
+            case ADDING_NOTIFICATION -> toAddNotification(chatId, textMsg);
             case PROCESSING_EDITING_NOTE -> editNote(chatId, textMsg);
             default -> Report.DEFAULT_MESSAGE;
         };
+    }
+
+
+    /**
+     * Метод для добавления заметки
+     *
+     * @param chatId  идентификатор чата
+     * @param textMsg сообщение
+     * @return сообщение о результате работы метода
+     */
+    private String toAddNotification(Long chatId, String textMsg) {
+        String[] lines = textMsg.split("\n");
+        String dateTimeLine = lines[0];
+        String title = lines[1];
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeLine, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        Notification notification = new Notification(title, chatId, dateTime);
+        notificationRepository.addNotification(notification, chatId);
+        messageHandlerState = MessageHandlerState.DEFAULT;
+        return Report.NOTIFICATION_ADDED;
     }
 
     /**

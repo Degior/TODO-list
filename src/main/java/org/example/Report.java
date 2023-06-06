@@ -52,4 +52,13 @@ public class Report {
     public static final String WRONG_INPUT = "Неверный формат ввода. Попробуйте еще раз";
 
     public static final String WRONG_TASK_INDEX = "Задачи с таким номером не существует";
+    public static final String ADDING_NOTIFICATION = """
+            Введите дату и время когда вы хотите получить уведомление в формате ДД.ММ.ГГГГ ЧЧ:ММ.
+            Также введите содержание уведомления с новой строки
+            Например:
+            01.01.2021 12:00
+            Пора кушать
+            """;
+
+    public static final String NOTIFICATION_ADDED = "Уведомление добавлено";
 }

@@ -1,6 +1,7 @@
 package org.example.Telegram;
 
 import org.example.MessageProcessing.MessageHandler;
+import org.example.MessageProcessing.NotificationRepository;
 import org.example.Reader;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,13 +14,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  */
 public class Telegram extends TelegramLongPollingBot implements MessageSender {
     private final MessageHandler messageHandler;
+    private final NotificationRepository notificationRepository;
     private final Reader reader = new Reader();
 
     /**
      * Конструктор класса Telegram
      */
-    public Telegram(MessageHandler messageHandler) {
+    public Telegram(MessageHandler messageHandler, NotificationRepository notificationRepository) {
         this.messageHandler = messageHandler;
+        this.notificationRepository = notificationRepository;
     }
 
     /**
@@ -27,8 +30,7 @@ public class Telegram extends TelegramLongPollingBot implements MessageSender {
      */
     @Override
     public String getBotUsername() {
-        String botName = reader.readFile("src/main/resources/name.txt");
-        return botName;
+        return reader.readFile("src/main/resources/name.txt");
     }
 
     /**
@@ -36,12 +38,13 @@ public class Telegram extends TelegramLongPollingBot implements MessageSender {
      */
     @Override
     public String getBotToken() {
-        String botToken = reader.readFile("src/main/resources/token.txt");
-        return botToken;
+        return reader.readFile("src/main/resources/token.txt");
     }
 
     /**
      * Метод, который принимает и отправляет сообщения
+     *
+     * @param update сообщение
      */
     public void onUpdateReceived(Update update) {
         try {
@@ -65,11 +68,19 @@ public class Telegram extends TelegramLongPollingBot implements MessageSender {
     /**
      * Метод отправляющий сообщение пользователю
      *
-     * @param chatId
-     * @param message
+     * @param chatId  id чата
+     * @param message сообщение
      */
     @Override
     public void sendMessage(Long chatId, String message) {
-        System.out.println("Telegram: " + message);
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.enableMarkdown(true);
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(message);
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 }
