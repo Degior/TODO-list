@@ -1,7 +1,6 @@
 package org.example.MessageProcessing;
 
 import org.example.NoteStrusture.Note;
-import org.example.NoteStrusture.NoteException;
 import org.example.NoteStrusture.NoteStorage;
 import org.example.Report;
 
@@ -142,10 +141,7 @@ public class MessageHandler {
             Note note = noteStorage.getNote(chatId, Filter.toFilterOutData(textMsg));
             return NoteFormatter.getNoteText(note) + Report.NOTE_EDITING;
             //return notesLogic.getNote(chatId, Filter.toFilterOutData(textMsg)) + Report.NOTE_EDITING;
-        } catch (FormatterException e) {
-            messageHandlerState = MessageHandlerState.EDITING_NOTE;
-            return e.getMessage();
-        } catch (FilterException e) {
+        } catch (FormatterException | FilterException e) {
             messageHandlerState = MessageHandlerState.EDITING_NOTE;
             return e.getMessage();
         }

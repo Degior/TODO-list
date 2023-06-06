@@ -35,3 +35,6 @@ build/
 .DS_Store
 
 *.class
+
+/src/main/resources/name.txt
+/src/main/resources/token.txt
