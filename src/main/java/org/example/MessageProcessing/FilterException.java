@@ -1,8 +1,8 @@
 package org.example.MessageProcessing;
 
-public class FilterException extends Exception{
+public class FilterException extends Exception {
 
-    public FilterException(String message){
+    public FilterException(String message) {
         super(message);
     }
 }

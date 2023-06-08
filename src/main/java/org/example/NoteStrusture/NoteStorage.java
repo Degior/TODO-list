@@ -1,6 +1,5 @@
 package org.example.NoteStrusture;
 
-import org.example.Report;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
@@ -13,11 +12,11 @@ import java.util.Set;
  */
 public class NoteStorage {
 
-    private Map<Long, Map<LocalDate, Note>> allNotes;
+    private final Map<Long, Map<LocalDate, Note>> allNotes;
 
     private Note currentNote;
 
-    public NoteStorage(){
+    public NoteStorage() {
         allNotes = new HashMap<>();
         currentNote = null;
     }
@@ -28,7 +27,7 @@ public class NoteStorage {
      * @param chatId    - id чата, в котором создается заметка
      * @param localDate - дата, на которую создается заметка
      */
-    public boolean addNote(Long chatId, LocalDate localDate){
+    public boolean addNote(Long chatId, LocalDate localDate) {
         Map<LocalDate, Note> currentMap;
         if (allNotes.containsKey(chatId)) {
             currentMap = allNotes.get(chatId);
@@ -62,7 +61,7 @@ public class NoteStorage {
      */
 
     @Nullable
-    public Set<LocalDate> getAllNotes(Long chatId){
+    public Set<LocalDate> getAllNotes(Long chatId) {
         if (allNotes.containsKey(chatId)) {
             return allNotes.get(chatId).keySet();
         }
@@ -71,20 +70,20 @@ public class NoteStorage {
     }
 
     /**
-     *Метод возвращающий задачи из заметки
+     * Метод возвращающий задачи из заметки
      *
-     * @param chatId - id чата, в котором создается заметка
+     * @param chatId    - id чата, в котором создается заметка
      * @param localDate - дата, на которую создается заметка
      * @return список задач
      */
 
     @Nullable
-    public Note getNote(Long chatId, LocalDate localDate){
-        if (!allNotes.containsKey(chatId)){
+    public Note getNote(Long chatId, LocalDate localDate) {
+        if (!allNotes.containsKey(chatId)) {
             return null;
         }
         Map<LocalDate, Note> currentMap = allNotes.get(chatId);
-        if (currentMap.containsKey(localDate)){
+        if (currentMap.containsKey(localDate)) {
             currentNote = currentMap.get(localDate);
             return currentNote;
         }
@@ -96,11 +95,11 @@ public class NoteStorage {
      *
      * @return true, если заметка успешно удалена, false, если заметки по такой дате не существует
      */
-    public boolean deleteNote(Long chatId, LocalDate localDate){
-        if (!allNotes.containsKey(chatId)){
+    public boolean deleteNote(Long chatId, LocalDate localDate) {
+        if (!allNotes.containsKey(chatId)) {
             return false;
         }
-        if (allNotes.get(chatId).containsKey(localDate)){
+        if (allNotes.get(chatId).containsKey(localDate)) {
             allNotes.get(chatId).remove(localDate);
             return true;
         }
@@ -120,7 +119,7 @@ public class NoteStorage {
      *
      * @param index - индекс задачи, которую нужно удалить
      */
-    public boolean deleteTextFromNote(int index){
+    public boolean deleteTextFromNote(int index) {
         return currentNote.deleteTask(index);
     }
 

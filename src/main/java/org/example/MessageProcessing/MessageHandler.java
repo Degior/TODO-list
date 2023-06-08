@@ -1,7 +1,6 @@
 package org.example.MessageProcessing;
 
 import org.example.NoteStrusture.Note;
-import org.example.NoteStrusture.NoteException;
 import org.example.NoteStrusture.NoteStorage;
 import org.example.Report;
 
@@ -10,7 +9,7 @@ import org.example.Report;
  */
 public class MessageHandler {
 
-    private NoteStorage noteStorage = new NoteStorage();
+    private final NoteStorage noteStorage = new NoteStorage();
 
     private MessageHandlerState messageHandlerState = MessageHandlerState.DEFAULT;
 
@@ -65,7 +64,7 @@ public class MessageHandler {
                 noteStorage.resetNote();
                 try {
                     return NoteFormatter.getAllNotes(noteStorage.getAllNotes(chatId));
-                }catch (FormatterException e) {
+                } catch (FormatterException e) {
                     return e.getMessage();
                 }
             case "/createNote":
@@ -113,7 +112,7 @@ public class MessageHandler {
                 noteStorage.addTaskToNote(textMsg.substring(9));
                 return Report.TASK_ADDED;
             } else if (textMsg.startsWith("Удалить")) {
-                if (noteStorage.deleteTextFromNote(Integer.parseInt(textMsg.substring(8)))){
+                if (noteStorage.deleteTextFromNote(Integer.parseInt(textMsg.substring(8)))) {
                     return Report.DELETED_TASK;
                 }
                 return Report.WRONG_TASK_INDEX;
@@ -160,10 +159,10 @@ public class MessageHandler {
      */
     private String appendNote(Long chatId, String message) {
         try {
-            if (noteStorage.addNote(chatId, Filter.toFilterOutData(message))){
+            if (noteStorage.addNote(chatId, Filter.toFilterOutData(message))) {
                 messageHandlerState = MessageHandlerState.PROCESSING_NOTE;
                 return Report.NOTE_MODIFICATION;
-            }else {
+            } else {
                 messageHandlerState = MessageHandlerState.PROCESSING_NOTE;
                 return Report.NOTE_ALREADY_EXIST;
             }
@@ -172,6 +171,7 @@ public class MessageHandler {
         }
 
     }
+
     /**
      * Метод для добавления задач в заметку.
      *
@@ -198,8 +198,7 @@ public class MessageHandler {
         } catch (FilterException e) {
             messageHandlerState = MessageHandlerState.SEARCHING_NOTE;
             return e.getMessage();
-        }
-        catch (FormatterException e){
+        } catch (FormatterException e) {
             return e.getMessage();
         }
     }
