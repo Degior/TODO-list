@@ -1,6 +1,7 @@
 package org.example.MessageProcessing;
 
 import org.example.NoteStrusture.Note;
+import org.example.NoteStrusture.Task;
 import org.example.Report;
 
 import java.time.LocalDate;
@@ -21,7 +22,20 @@ public class NoteFormatter {
         if (note == null){
             throw new FormatterException(Report.NO_SUCH_NOTE);
         }
-        return note.getText();
+        StringBuilder noteText = new StringBuilder();
+        int counter = 1;
+        noteText.append("\n");
+        for (Task task : note.getTasks()) {
+            if (task.isDone()){
+                noteText.append("V ").append(task.getDescription()).append("\n");
+            }
+            else {
+                noteText.append(counter).append(". ").append(task.getDescription()).append("\n");
+            }
+
+            counter++;
+        }
+        return noteText.toString();
     }
 
     /**

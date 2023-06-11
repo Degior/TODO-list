@@ -1,7 +1,6 @@
 package org.example.MessageProcessing;
 
 import org.example.NoteStrusture.Note;
-import org.example.NoteStrusture.NoteException;
 import org.example.NoteStrusture.NoteStorage;
 import org.example.Report;
 

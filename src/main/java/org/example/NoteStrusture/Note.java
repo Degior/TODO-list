@@ -26,24 +26,12 @@ public class Note {
     }
 
     /**
-     * Метод для получения текста заметки
-     * @return текст заметки
+     * Метод для получения задач заметки
+     * @return taskList
      */
-    public String getText(){
-        System.out.println();
-        StringBuilder noteText = new StringBuilder();
-        int counter = 1;
-        for (Task task : tasksList) {
-            if (task.getState() == TaskState.DONE){
-                noteText.append("V ").append(task.getDescription()).append("\n");
-            }
-            else {
-                noteText.append(counter).append(". ").append(task.getDescription()).append("\n");
-            }
 
-            counter++;
-        }
-        return noteText.toString();
+    public List<Task> getTasks(){
+        return tasksList;
     }
 
     /**

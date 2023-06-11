@@ -29,4 +29,8 @@ public class Task {
 
     public TaskState getState(){return state;}
 
+    public boolean isDone(){
+        return state == TaskState.DONE;
+    }
+
 }
