@@ -1,4 +1,5 @@
 package org.example.NoteStrusture;
+
 /**
  * Класс для описания одной задачи
  */
@@ -8,26 +9,28 @@ public class Task {
 
     private TaskState state;
 
-    private String description;
+    private final String description;
 
     private String details;
 
-    public Task(String description){
+    public Task(String description) {
         this.description = description;
     }
 
     /**
      * Метод помечающий задачу как выполненную
      */
-    public void chahgeState(){
+    public void chahgeState() {
         state = TaskState.DONE;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
-    public TaskState getState(){return state;}
+    public TaskState getState() {
+        return state;
+    }
 
     public boolean isDone(){
         return state == TaskState.DONE;

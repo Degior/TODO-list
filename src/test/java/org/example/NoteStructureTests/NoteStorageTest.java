@@ -2,7 +2,6 @@ package org.example.NoteStructureTests;
 
 import org.example.MessageProcessing.FormatterException;
 import org.example.MessageProcessing.NoteFormatter;
-import org.example.NoteStrusture.NoteException;
 import org.example.NoteStrusture.NoteStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

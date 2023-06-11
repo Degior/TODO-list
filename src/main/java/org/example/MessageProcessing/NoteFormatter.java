@@ -6,6 +6,7 @@ import org.example.Report;
 
 import java.time.LocalDate;
 import java.util.Set;
+
 /**
  * Класс NoteFormatte. Отвечает за представление заметки в удобном виде  для пользователя
  */
@@ -19,7 +20,7 @@ public class NoteFormatter {
      * @throws FormatterException если заметка null
      */
     public static String getNoteText(Note note) throws FormatterException {
-        if (note == null){
+        if (note == null) {
             throw new FormatterException(Report.NO_SUCH_NOTE);
         }
         StringBuilder noteText = new StringBuilder();
@@ -47,11 +48,11 @@ public class NoteFormatter {
      */
 
     public static String getAllNotes(Set<LocalDate> dates) throws FormatterException {
-        if (dates == null){
+        if (dates == null) {
             throw new FormatterException(Report.NO_NOTES);
         }
         String allNotes = "";
-        for (LocalDate date: dates){
+        for (LocalDate date : dates) {
             allNotes = allNotes + date + "\n";
         }
         return allNotes;
