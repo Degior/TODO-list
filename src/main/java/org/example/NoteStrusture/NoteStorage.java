@@ -1,5 +1,6 @@
 package org.example.NoteStrusture;
 
+
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
@@ -7,18 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Класс хранящий все заметки
- */
 public class NoteStorage {
 
+    /**
+     * одному id соответствует Map из даты в качестве ключа и заметки в качестве значения
+     */
     private final Map<Long, Map<LocalDate, Note>> allNotes;
 
-    private Note currentNote;
+    private Map<Long, Note> currentNote;
+
 
     public NoteStorage() {
         allNotes = new HashMap<>();
-        currentNote = null;
+        currentNote = new HashMap<>();
     }
 
     /**
@@ -27,67 +29,53 @@ public class NoteStorage {
      * @param chatId    - id чата, в котором создается заметка
      * @param localDate - дата, на которую создается заметка
      */
+
     public boolean addNote(Long chatId, LocalDate localDate) {
-        Map<LocalDate, Note> currentMap;
-        if (allNotes.containsKey(chatId)) {
-            currentMap = allNotes.get(chatId);
-            if (currentMap.containsKey(localDate)) {
-                return false;
-            }
-            allNotes.get(chatId).put(localDate, new Note());
-        } else {
-            currentMap = new HashMap<>();
-            currentMap.put(localDate, new Note());
-            allNotes.put(chatId, currentMap);
+        Map<LocalDate, Note> userNotes = allNotes.computeIfAbsent(chatId, key -> new HashMap<>());
+        if (userNotes.containsKey(localDate)) {
+            return false;
         }
-        currentNote = currentMap.get(localDate);
+        userNotes.put(localDate, new Note());
+        currentNote.put(chatId, userNotes.get(localDate));
         return true;
     }
 
     /**
      * Метод добавляющий задачу в текущую заметку
      *
-     * @param tasks - задача, которую нужно добавить
+     * @param task - задача, которую нужно добавить
      */
-    public void addTaskToNote(String tasks) {
-        currentNote.addTask(tasks);
+    public void addTaskToNote(Long chatId, String task) {
+        currentNote.get(chatId).addTask(task);
     }
 
     /**
-     * Метод возвращающий список всех заметок пользователя
+     * Метод возвращающий множество всех заметок пользователя
      *
      * @param chatId id чата пользователя
      * @return список дат всех существующих заметок
      */
-
     @Nullable
     public Set<LocalDate> getAllNotes(Long chatId) {
         if (allNotes.containsKey(chatId)) {
             return allNotes.get(chatId).keySet();
         }
-        return null;
-
+        return Set.of();
     }
 
     /**
      * Метод возвращающий задачи из заметки
      *
-     * @param chatId    - id чата, в котором создается заметка
-     * @param localDate - дата, на которую создается заметка
+     * @param chatId    - id чата
+     * @param localDate - дата, на которую была создана
      * @return список задач
      */
-
     @Nullable
     public Note getNote(Long chatId, LocalDate localDate) {
-        if (!allNotes.containsKey(chatId)) {
-            return null;
-        }
-        Map<LocalDate, Note> currentMap = allNotes.get(chatId);
-        if (currentMap.containsKey(localDate)) {
-            currentNote = currentMap.get(localDate);
-            return currentNote;
-        }
-        return null;
+        Map<LocalDate, Note> currentMap = allNotes.getOrDefault(chatId, new HashMap<>());
+        Note note = currentMap.getOrDefault(localDate, null);
+        currentNote.put(chatId, note);
+        return note;
     }
 
     /**
@@ -108,27 +96,25 @@ public class NoteStorage {
 
 
     /**
-     * Метод, который прекращает работу с текущей заметкой
-     */
-    public void resetNote() {
-        currentNote = null;
-    }
-
-    /**
      * Метод, который удаляет задачу из текущей заметки
      *
      * @param index - индекс задачи, которую нужно удалить
      */
-    public boolean deleteTextFromNote(int index) {
-        return currentNote.deleteTask(index);
+    public boolean deleteTextFromNote(Long chatId, int index) {
+        return currentNote.get(chatId).deleteTask(index);
     }
 
+
     /**
-     * Метод, помечающий задачу из текущей заметки как выполненную
+     * Метод, который помечает задачу по индексу как выполненную
      *
-     * @param index - индекс задачи, которую нужно пометить
+     * @param index - индекс задачи, которую нужно отметить
      */
-    public void markNoteAsCompleted(int index) {
-        currentNote.markTaskAsCompleted(index);
+    public void markTaskAsCompleted(Long chatId, int index) {
+        currentNote.get(chatId).markTaskAsCompleted(index);
+    }
+
+    public void resetNote(Long chatId) {
+        currentNote.put(chatId, null);
     }
 }

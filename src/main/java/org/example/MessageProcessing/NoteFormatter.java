@@ -2,13 +2,13 @@ package org.example.MessageProcessing;
 
 import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.Task;
-import org.example.Report;
+import org.example.Messages;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 /**
- * Класс NoteFormatte. Отвечает за представление заметки в удобном виде  для пользователя
+ * Класс NoteFormatter. Отвечает за представление заметки в удобном виде для пользователя
  */
 public class NoteFormatter {
 
@@ -21,7 +21,7 @@ public class NoteFormatter {
      */
     public static String getNoteText(Note note) throws FormatterException {
         if (note == null) {
-            throw new FormatterException(Report.NO_SUCH_NOTE);
+            throw new FormatterException(Messages.NO_SUCH_NOTE);
         }
         StringBuilder noteText = new StringBuilder();
         int counter = 1;
@@ -46,10 +46,9 @@ public class NoteFormatter {
      * @return список заметок в текстовом виде
      * @throws FormatterException если у пользователя нет заметок
      */
-
     public static String getAllNotes(Set<LocalDate> dates) throws FormatterException {
-        if (dates == null) {
-            throw new FormatterException(Report.NO_NOTES);
+        if (dates.isEmpty()) {
+            throw new FormatterException(Messages.NO_NOTES);
         }
         String allNotes = "";
         for (LocalDate date : dates) {

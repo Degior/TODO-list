@@ -34,7 +34,7 @@ public class NoteStorageTest {
 
     @Test
     public void fillNoteTest() throws FormatterException {
-        noteStorage.addTaskToNote("новая задача");
+        noteStorage.addTaskToNote(0L, "новая задача");
         Assertions.assertEquals("1. новая задача\n", NoteFormatter.getNoteText(noteStorage.getNote(chatId, localDate)));
     }
 

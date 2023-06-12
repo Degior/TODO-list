@@ -6,9 +6,9 @@ import org.example.Telegram.Telegram;
 /**
  * Класс для запуска приложения реализующего бота для ведения списка задач и привычек
  */
-public class App {
+public class Applaunch {
     public static void main(String[] args) {
-        App.run();
+        Applaunch.run();
     }
 
     private static void run() {

@@ -55,6 +55,6 @@ public class Note {
      */
 
     public void markTaskAsCompleted(int index) {
-        tasksList.get(index - 1).chahgeState();
+        tasksList.get(index - 1).setDone();
     }
 }

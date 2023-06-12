@@ -5,9 +5,9 @@ package org.example.NoteStrusture;
  */
 public class Task {
 
-    private TaskStatus status;
+    private TaskStatus status = TaskStatus.DEFAULT;
 
-    private TaskState state;
+    private TaskState state = TaskState.NOT_DONE;
 
     private final String description;
 
@@ -20,7 +20,7 @@ public class Task {
     /**
      * Метод помечающий задачу как выполненную
      */
-    public void chahgeState() {
+    public void setDone() {
         state = TaskState.DONE;
     }
 
@@ -31,7 +31,6 @@ public class Task {
     public TaskState getState() {
         return state;
     }
-
     public boolean isDone(){
         return state == TaskState.DONE;
     }

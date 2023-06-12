@@ -1,5 +1,9 @@
 package org.example.MessageProcessing;
 
+
+/**
+ * Состояния класса MessageHandler
+ */
 public enum MessageHandlerState {
     CREATING_NOTE_DATE,
     PROCESSING_NOTE,

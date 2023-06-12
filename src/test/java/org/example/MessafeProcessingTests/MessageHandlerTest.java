@@ -1,8 +1,6 @@
 package org.example.MessafeProcessingTests;
 
 import org.example.MessageProcessing.MessageHandler;
-import org.example.MessageProcessing.MessageHandlerState;
-import org.example.Report;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

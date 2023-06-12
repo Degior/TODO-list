@@ -1,8 +1,7 @@
 package org.example.MessafeProcessingTests;
 
-import org.example.MessageProcessing.Filter;
-import org.example.MessageProcessing.FilterException;
-
+import org.example.MessageProcessing.Parser;
+import org.example.MessageProcessing.ParserException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
@@ -14,8 +13,8 @@ public class FilterTest {
     public void FilterOutDataTest(){
         LocalDate localDate = LocalDate.of(LocalDate.now().getYear(), 10, 20);
         try {
-            Assertions.assertEquals(Filter.toFilterOutData("20 10"), localDate);
-        }catch (FilterException e){
+            Assertions.assertEquals(Parser.parseData("20 10"), localDate);
+        }catch (ParserException e){
             e.printStackTrace();
         }
     }
@@ -23,8 +22,8 @@ public class FilterTest {
     @Test
     void testExpectedException() {
 
-        FilterException thrown = Assertions.assertThrows(FilterException.class, () -> {
-            Filter.toFilterOutData("20 20");
+        ParserException thrown = Assertions.assertThrows(ParserException.class, () -> {
+            Parser.parseData("20 20");
         });
 
         Assertions.assertEquals("Неверный формат ввода", thrown.getMessage());
@@ -33,8 +32,8 @@ public class FilterTest {
     @Test
     void testExpectedException2() {
 
-        FilterException thrown = Assertions.assertThrows(FilterException.class, () -> {
-            Filter.toFilterOutData("200");
+        ParserException thrown = Assertions.assertThrows(ParserException.class, () -> {
+            Parser.parseData("200");
         });
 
         Assertions.assertEquals("Неверный формат ввода", thrown.getMessage());

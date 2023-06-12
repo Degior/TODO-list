@@ -35,8 +35,8 @@ public class Telegram implements MessageSender {
     /**
      * Метод отправляющий сообщение пользователю
      *
-     * @param chatId
-     * @param message
+     * @param chatId id пользователя
+     * @param message сообщение, отправляемое пользователю
      */
     @Override
     public void sendMessage(Long chatId, String message) {
