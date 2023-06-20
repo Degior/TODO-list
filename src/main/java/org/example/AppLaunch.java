@@ -7,9 +7,9 @@ import org.example.Telegram.ConsoleBot;
 /**
  * Класс для запуска приложения реализующего бота для ведения списка задач и привычек
  */
-public class Applaunch {
+public class AppLaunch {
     public static void main(String[] args) {
-        Applaunch.run();
+        AppLaunch.run();
     }
 
     private static void run() {
