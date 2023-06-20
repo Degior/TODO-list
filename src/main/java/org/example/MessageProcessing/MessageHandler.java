@@ -1,8 +1,8 @@
 package org.example.MessageProcessing;
 
+import org.example.Messages;
 import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.NoteStorage;
-import org.example.Messages;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,12 +11,13 @@ import java.util.Map;
  * Класс отвечает за обработку сообщений пользователя
  */
 public class MessageHandler {
-
     Map<Long, MessageHandlerState> messageHandlerState = new HashMap<>();
+    private NoteStorage noteStorage;
 
-    private final NoteStorage noteStorage = new NoteStorage();
+    public MessageHandler(NoteStorage noteStorage) {
+        this.noteStorage = noteStorage;
+    }
 
-    //private MessageHandlerState messageHandlerState = MessageHandlerState.DEFAULT;
 
     /**
      * Замена сообщений на специальные команды
@@ -40,7 +41,6 @@ public class MessageHandler {
 
     /**
      * Метод для обработки ввода пользователя.
-     *
      * Если введена специальная команда, то вызывается метод getSpecialCommand.
      * Если введена не специальная команда, то вызывается метод getNonSpecialCommand.
      */
@@ -127,7 +127,7 @@ public class MessageHandler {
                 return deleteTask(chatId, textMsg);
             } else if (textMsg.startsWith("Отметить выполненным")) {
                 return completeTask(chatId, textMsg);
-            }else {
+            } else {
                 return Messages.WRONG_COMMAND;
             }
         } catch (Exception e) {
@@ -174,7 +174,7 @@ public class MessageHandler {
 
 
     /**
-     * Вывод сожержания текста заметки и начало работы с ней
+     * Вывод содержания текста заметки и начало работы с ней
      *
      * @param chatId  идентификатор чата
      * @param textMsg дата заметки
@@ -184,7 +184,7 @@ public class MessageHandler {
         try {
             messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_EDITING_NOTE);
             Note note = noteStorage.getNote(chatId, Parser.parseData(textMsg));
-            return org.example.MessageProcessing.NoteFormatter.getNoteText(note) + Messages.NOTE_EDITING;
+            return NoteFormatter.getNoteText(note) + Messages.NOTE_EDITING;
         } catch (Exception e) {
             messageHandlerState.put(chatId, MessageHandlerState.EDITING_NOTE);
             return e.getMessage();
@@ -235,7 +235,7 @@ public class MessageHandler {
         try {
             messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
             Note note = noteStorage.getNote(chatId, Parser.parseData(message));
-            return org.example.MessageProcessing.NoteFormatter.getNoteText(note);
+            return NoteFormatter.getNoteText(note);
         } catch (Exception e) {
             messageHandlerState.put(chatId, MessageHandlerState.SEARCHING_NOTE);
             return e.getMessage();

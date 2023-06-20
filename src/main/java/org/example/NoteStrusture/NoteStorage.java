@@ -15,12 +15,12 @@ public class NoteStorage {
      */
     private final Map<Long, Map<LocalDate, Note>> allNotes;
 
-    private Map<Long, Note> currentNote;
+    private final Map<Long, Note> currentNotes;
 
 
     public NoteStorage() {
         allNotes = new HashMap<>();
-        currentNote = new HashMap<>();
+        currentNotes = new HashMap<>();
     }
 
     /**
@@ -36,7 +36,7 @@ public class NoteStorage {
             return false;
         }
         userNotes.put(localDate, new Note());
-        currentNote.put(chatId, userNotes.get(localDate));
+        currentNotes.put(chatId, userNotes.get(localDate));
         return true;
     }
 
@@ -46,7 +46,7 @@ public class NoteStorage {
      * @param task - задача, которую нужно добавить
      */
     public void addTaskToNote(Long chatId, String task) {
-        currentNote.get(chatId).addTask(task);
+        currentNotes.get(chatId).addTask(task);
     }
 
     /**
@@ -74,7 +74,7 @@ public class NoteStorage {
     public Note getNote(Long chatId, LocalDate localDate) {
         Map<LocalDate, Note> currentMap = allNotes.getOrDefault(chatId, new HashMap<>());
         Note note = currentMap.getOrDefault(localDate, null);
-        currentNote.put(chatId, note);
+        currentNotes.put(chatId, note);
         return note;
     }
 
@@ -101,7 +101,7 @@ public class NoteStorage {
      * @param index - индекс задачи, которую нужно удалить
      */
     public boolean deleteTextFromNote(Long chatId, int index) {
-        return currentNote.get(chatId).deleteTask(index);
+        return currentNotes.get(chatId).deleteTask(index);
     }
 
 
@@ -111,10 +111,10 @@ public class NoteStorage {
      * @param index - индекс задачи, которую нужно отметить
      */
     public void markTaskAsCompleted(Long chatId, int index) {
-        currentNote.get(chatId).markTaskAsCompleted(index);
+        currentNotes.get(chatId).markTaskAsCompleted(index);
     }
 
     public void resetNote(Long chatId) {
-        currentNote.put(chatId, null);
+        currentNotes.put(chatId, null);
     }
 }

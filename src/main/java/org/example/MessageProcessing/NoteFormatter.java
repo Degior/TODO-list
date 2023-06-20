@@ -1,8 +1,8 @@
 package org.example.MessageProcessing;
 
+import org.example.Messages;
 import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.Task;
-import org.example.Messages;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -25,7 +25,6 @@ public class NoteFormatter {
         }
         StringBuilder noteText = new StringBuilder();
         int counter = 1;
-        noteText.append("\n");
         for (Task task : note.getTasks()) {
             if (task.isDone()){
                 noteText.append("V ").append(task.getDescription()).append("\n");
@@ -50,11 +49,11 @@ public class NoteFormatter {
         if (dates.isEmpty()) {
             throw new FormatterException(Messages.NO_NOTES);
         }
-        String allNotes = "";
+        StringBuilder allNotes = new StringBuilder();
         for (LocalDate date : dates) {
-            allNotes = allNotes + date + "\n";
+            allNotes.append(date).append("\n");
         }
-        return allNotes;
+        return allNotes.toString();
 
     }
 }

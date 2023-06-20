@@ -5,15 +5,15 @@ import org.example.MessageProcessing.MessageHandler;
 import java.util.Scanner;
 
 /**
- * Класс отвечающей за работу Telegram. Пока не реализован.
+ * Класс симулирующий работу Telegram
  */
-public class Telegram implements MessageSender {
+public class ConsoleBot implements MessageSender {
     private final MessageHandler messageHandler;
 
     /**
-     * Конструктор класса Telegram
+     * Конструктор класса
      */
-    public Telegram(MessageHandler messageHandler) {
+    public ConsoleBot(MessageHandler messageHandler) {
         this.messageHandler = messageHandler;
     }
 

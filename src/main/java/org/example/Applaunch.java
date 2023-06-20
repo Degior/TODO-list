@@ -1,7 +1,8 @@
 package org.example;
 
 import org.example.MessageProcessing.MessageHandler;
-import org.example.Telegram.Telegram;
+import org.example.NoteStrusture.NoteStorage;
+import org.example.Telegram.ConsoleBot;
 
 /**
  * Класс для запуска приложения реализующего бота для ведения списка задач и привычек
@@ -12,8 +13,9 @@ public class Applaunch {
     }
 
     private static void run() {
-        MessageHandler messageHandler = new MessageHandler();
-        Telegram telegram = new Telegram(messageHandler);
-        telegram.onUpdateReceived();
+        NoteStorage noteStorage = new NoteStorage();
+        MessageHandler messageHandler = new MessageHandler(noteStorage);
+        ConsoleBot consoleBot = new ConsoleBot(messageHandler);
+        consoleBot.onUpdateReceived();
     }
 }
