@@ -24,20 +24,30 @@ public class NoteStorage {
     }
 
     /**
-     * Метод создающий заметку по дате
+     * Метод проверящий возможность создать заметку по дате
      *
      * @param chatId    - id чата, в котором создается заметка
      * @param localDate - дата, на которую создается заметка
      */
-
     public boolean addNote(Long chatId, LocalDate localDate) {
         Map<LocalDate, Note> userNotes = allNotes.computeIfAbsent(chatId, key -> new HashMap<>());
         if (userNotes.containsKey(localDate)) {
             return false;
         }
+        addGoodNote(userNotes, chatId, localDate);
+        return true;
+    }
+
+    /**
+     * Метод создающий заметку по дате
+     *
+     * @param userNotes - все заметки конкретного пользователя
+     * @param chatId    - id чата, в котором создается заметка
+     * @param localDate - дата, на которую создается заметка
+     */
+    private void addGoodNote(Map<LocalDate, Note> userNotes, Long chatId, LocalDate localDate){
         userNotes.put(localDate, new Note());
         currentNotes.put(chatId, userNotes.get(localDate));
-        return true;
     }
 
     /**
@@ -79,19 +89,25 @@ public class NoteStorage {
     }
 
     /**
-     * Метод удаляющий заметку
+     * Метод проверяющий возможность удаления заметки
      *
-     * @return true, если заметка успешно удалена, false, если заметки по такой дате не существует
+     * @return true, если , false, если заметки по такой дате не существует
      */
-    public boolean deleteNote(Long chatId, LocalDate localDate) {
+    public boolean isPossibleToDeleteNote(Long chatId, LocalDate localDate) {
         if (!allNotes.containsKey(chatId)) {
             return false;
         }
         if (allNotes.get(chatId).containsKey(localDate)) {
-            allNotes.get(chatId).remove(localDate);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Метод удаляющий заметку по дате
+     */
+    public void deleteNote(Long chatId, LocalDate localDate){
+        allNotes.get(chatId).remove(localDate);
     }
 
 

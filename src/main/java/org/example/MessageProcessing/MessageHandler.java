@@ -3,6 +3,7 @@ package org.example.MessageProcessing;
 import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.NoteStorage;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -252,7 +253,9 @@ public class MessageHandler {
 
         try {
             messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
-            if (noteStorage.deleteNote(chatId, Parser.parseData(message))) {
+            LocalDate localDate = Parser.parseData(message);
+            if (noteStorage.isPossibleToDeleteNote(chatId, localDate)) {
+                noteStorage.deleteNote(chatId, localDate);
                 return Messages.NOTE_DELETED;
             } else {
                 return Messages.NO_SUCH_NOTE;

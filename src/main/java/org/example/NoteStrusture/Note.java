@@ -35,7 +35,7 @@ public class Note {
     }
 
     /**
-     * Метод для удаления одной задачи по ее номеру
+     * Метод для проверки возможности удаления задачи из заметки
      *
      * @param index номер заметки, начиная с 0
      * @return true если заметка успешно удалена
@@ -44,8 +44,18 @@ public class Note {
         if (tasksList.size() < index) {
             return false;
         }
-        tasksList.remove(index - 1);
+        deleteGoodTask(index);
         return true;
+    }
+
+    /**
+     * Метод для удаления одной задачи по ее номеру
+     *
+     * @param index номер заметки, начиная с 0
+     * @return true если заметка успешно удалена
+     */
+    private void deleteGoodTask(int index){
+        tasksList.remove(index - 1);
     }
 
     /**

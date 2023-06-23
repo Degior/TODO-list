@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 
-public class FilterTest {
+public class ParserTest {
 
     @Test
-    public void FilterOutDataTest(){
+    public void ParseDataTest(){
         LocalDate localDate = LocalDate.of(LocalDate.now().getYear(), 10, 20);
         try {
             Assertions.assertEquals(Parser.parseData("20 10"), localDate);
