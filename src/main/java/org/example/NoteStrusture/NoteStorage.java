@@ -4,9 +4,7 @@ package org.example.NoteStrusture;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class NoteStorage {
 
@@ -65,7 +63,6 @@ public class NoteStorage {
      * @param chatId id чата пользователя
      * @return список дат всех существующих заметок
      */
-    @Nullable
     public Set<LocalDate> getAllNotes(Long chatId) {
         if (allNotes.containsKey(chatId)) {
             return allNotes.get(chatId).keySet();

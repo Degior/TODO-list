@@ -29,7 +29,6 @@ public class Note {
      *
      * @return taskList
      */
-
     public List<Task> getTasks(){
         return tasksList;
     }
@@ -48,11 +47,11 @@ public class Note {
         return true;
     }
 
+
     /**
      * Метод для удаления одной задачи по ее номеру
      *
      * @param index номер заметки, начиная с 0
-     * @return true если заметка успешно удалена
      */
     private void deleteGoodTask(int index){
         tasksList.remove(index - 1);
@@ -63,7 +62,6 @@ public class Note {
      *
      * @param index номер заметки, начиная с 0
      */
-
     public void markTaskAsCompleted(int index) {
         tasksList.get(index - 1).setDone();
     }

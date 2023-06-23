@@ -2,12 +2,13 @@ package org.example.MessageProcessing;
 
 import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.Task;
+import org.example.Messages;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 /**
- * Класс NoteFormatter. Отвечает за представление заметки в удобном виде для пользователя
+ * Класс отвечает за представление заметки в удобном виде для пользователя
  */
 public class NoteFormatter {
 

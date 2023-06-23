@@ -34,6 +34,7 @@ public class MessageHandler {
             case "/Открыть заметку" -> "/openNote";
             case "/Удалить заметку" -> "/deleteNote";
             case "/Редактировать заметку" -> "/editNote";
+            case "/Посмотреть статистику" -> "/getStatistics";
             case "/Отмена" -> "/cancel";
             default -> textMsg;
         };
@@ -62,9 +63,9 @@ public class MessageHandler {
     private String performSpecialCommand(Long chatId, String textMsg) {
         switch (textMsg) {
             case "/start":
-                return Messages.START_MESSAGE;
+                return org.example.MessageProcessing.Messages.START_MESSAGE;
             case "/help":
-                return Messages.HELP_MESSAGE;
+                return org.example.MessageProcessing.Messages.HELP_MESSAGE;
             case "/getNotesList":
                 messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
                 noteStorage.resetNote(chatId);
@@ -75,24 +76,26 @@ public class MessageHandler {
                 }
             case "/createNote":
                 messageHandlerState.put(chatId, MessageHandlerState.CREATING_NOTE_DATE);
-                return Messages.NOTE_CREATION;
+                return org.example.MessageProcessing.Messages.NOTE_CREATION;
             case "/openNote":
                 messageHandlerState.put(chatId, MessageHandlerState.SEARCHING_NOTE);
-                return Messages.NOTE_SEARCH;
+                return org.example.MessageProcessing.Messages.NOTE_SEARCH;
             case "/deleteNote":
                 messageHandlerState.put(chatId, MessageHandlerState.DELETING_NOTE);
-                return Messages.DELETE_NOTE;
+                return org.example.MessageProcessing.Messages.DELETE_NOTE;
             case "/editNote":
                 messageHandlerState.put(chatId, MessageHandlerState.EDITING_NOTE);
-                return Messages.EDIT_NOTE;
+                return org.example.MessageProcessing.Messages.EDIT_NOTE;
+            case "/getStatistics":
+                messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
+                return getStatistics(chatId);
             case "/cancel":
                 messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
-                return Messages.CANCEL;
+                return org.example.MessageProcessing.Messages.CANCEL;
             default:
-                return Messages.DEFAULT_MESSAGE;
+                return org.example.MessageProcessing.Messages.DEFAULT_MESSAGE;
         }
     }
-
 
     /**
      * Обработка специфичных команд пользователя
@@ -109,9 +112,18 @@ public class MessageHandler {
             case DELETING_NOTE -> deleteNote(chatId, textMsg);
             case EDITING_NOTE -> toEditNoteState(chatId, textMsg);
             case PROCESSING_EDITING_NOTE -> getOption(chatId, textMsg);
-            default -> Messages.DEFAULT_MESSAGE;
+            default -> org.example.MessageProcessing.Messages.DEFAULT_MESSAGE;
         };
     }
+
+
+    private String getStatistics(Long chatId) {
+        /*for (Note note : noteStorage.getAllNotes(chatId)){
+
+        }*/
+        return "";
+    }
+
 
     /**
      * Выбор опции при редактировании заметки
@@ -128,10 +140,10 @@ public class MessageHandler {
             } else if (textMsg.startsWith("Отметить выполненным")) {
                 return completeTask(chatId, textMsg);
             } else {
-                return Messages.WRONG_COMMAND;
+                return org.example.MessageProcessing.Messages.WRONG_COMMAND;
             }
         } catch (Exception e) {
-            return Messages.WRONG_COMMAND;
+            return org.example.MessageProcessing.Messages.WRONG_COMMAND;
         }
     }
 
@@ -143,9 +155,9 @@ public class MessageHandler {
      */
     private String deleteTask(Long chatId, String textMsg) {
         if (noteStorage.deleteTextFromNote(chatId, Integer.parseInt(textMsg.substring(8)))) {
-            return Messages.DELETED_TASK;
+            return org.example.MessageProcessing.Messages.DELETED_TASK;
         }
-        return Messages.WRONG_TASK_INDEX;
+        return org.example.MessageProcessing.Messages.WRONG_TASK_INDEX;
     }
 
     /**
@@ -157,7 +169,7 @@ public class MessageHandler {
     private String completeTask(Long chatId, String textMsg) {
         noteStorage.markTaskAsCompleted(chatId, Integer.parseInt(textMsg.substring(21)));
         messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_NOTE);
-        return Messages.NOTE_EDITED;
+        return org.example.MessageProcessing.Messages.NOTE_EDITED;
     }
 
     /**
@@ -168,7 +180,7 @@ public class MessageHandler {
      */
     private String addTask(Long chatId, String textMsg) {
         noteStorage.addTaskToNote(chatId, textMsg.substring(9));
-        return Messages.TASK_ADDED;
+        return org.example.MessageProcessing.Messages.TASK_ADDED;
     }
 
 
@@ -184,7 +196,7 @@ public class MessageHandler {
         try {
             messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_EDITING_NOTE);
             Note note = noteStorage.getNote(chatId, Parser.parseData(textMsg));
-            return NoteFormatter.getNoteText(note) + Messages.NOTE_EDITING;
+            return NoteFormatter.getNoteText(note) + org.example.MessageProcessing.Messages.NOTE_EDITING;
         } catch (Exception e) {
             messageHandlerState.put(chatId, MessageHandlerState.EDITING_NOTE);
             return e.getMessage();
@@ -202,10 +214,10 @@ public class MessageHandler {
         try {
             if (noteStorage.addNote(chatId, Parser.parseData(message))) {
                 messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_NOTE);
-                return Messages.NOTE_MODIFICATION;
+                return org.example.MessageProcessing.Messages.NOTE_MODIFICATION;
             } else {
                 messageHandlerState.put(chatId, MessageHandlerState.CREATING_NOTE_DATE);
-                return Messages.NOTE_ALREADY_EXIST;
+                return org.example.MessageProcessing.Messages.NOTE_ALREADY_EXIST;
             }
         } catch (ParserException e) {
             return e.getMessage();
@@ -222,7 +234,7 @@ public class MessageHandler {
      */
     private String toProcessExistingNote(Long chatId, String message) {
         noteStorage.addTaskToNote(chatId, message);
-        return Messages.TASK_ADDED;
+        return org.example.MessageProcessing.Messages.TASK_ADDED;
     }
 
     /**
@@ -256,9 +268,9 @@ public class MessageHandler {
             LocalDate localDate = Parser.parseData(message);
             if (noteStorage.isPossibleToDeleteNote(chatId, localDate)) {
                 noteStorage.deleteNote(chatId, localDate);
-                return Messages.NOTE_DELETED;
+                return org.example.MessageProcessing.Messages.NOTE_DELETED;
             } else {
-                return Messages.NO_SUCH_NOTE;
+                return org.example.MessageProcessing.Messages.NO_SUCH_NOTE;
             }
         } catch (ParserException e) {
             messageHandlerState.put(chatId, MessageHandlerState.DELETING_NOTE);
