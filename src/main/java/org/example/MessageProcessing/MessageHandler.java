@@ -2,9 +2,12 @@ package org.example.MessageProcessing;
 
 import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.NoteStorage;
+import org.example.statistics.Statistics;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -118,10 +121,12 @@ public class MessageHandler {
 
 
     private String getStatistics(Long chatId) {
-        /*for (Note note : noteStorage.getAllNotes(chatId)){
-
-        }*/
-        return "";
+        List<String> statisticsList = new ArrayList<>();
+        for (LocalDate localDate: noteStorage.getAllNotes(chatId)){
+            Note note = noteStorage.getNote(chatId, localDate);
+            statisticsList.add(NoteFormatter.formatNoteStatistics(localDate, Statistics.getNoteStatistics(note)));
+        }
+        return NoteFormatter.formatIdStatistics(statisticsList);
     }
 
 
