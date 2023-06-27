@@ -2,9 +2,13 @@ package org.example.MessageProcessing;
 
 import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.NoteStorage;
+import org.example.NoteStrusture.TaskStatus;
+import org.example.Telegram.MessageSender;
 import org.example.statistics.Statistics;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,11 +18,17 @@ import java.util.Map;
  * Класс отвечает за обработку сообщений пользователя
  */
 public class MessageHandler {
-    Map<Long, MessageHandlerState> messageHandlerState = new HashMap<>();
-    private NoteStorage noteStorage;
 
-    public MessageHandler(NoteStorage noteStorage) {
-        this.noteStorage = noteStorage;
+    MessageSender messageSender;
+    Map<Long, MessageHandlerState> messageHandlerState = new HashMap<>();
+    private final NoteStorage noteStorage = new NoteStorage();
+    private final NotificationRepository notificationRepository;
+
+    TaskStatus taskStatus = new TaskStatus();
+
+    public MessageHandler(MessageSender messageSender, NotificationRepository notificationRepository) {
+        this.messageSender = messageSender;
+        this.notificationRepository = notificationRepository;
     }
 
 
@@ -48,13 +58,16 @@ public class MessageHandler {
      * Если введена специальная команда, то вызывается метод getSpecialCommand.
      * Если введена не специальная команда, то вызывается метод getNonSpecialCommand.
      */
-    public String processInput(Long chatId, String textMsg) {
+    public void processInput(Long chatId, String textMsg) {
         messageHandlerState.putIfAbsent(chatId, MessageHandlerState.DEFAULT);
+        taskStatus.initUser(chatId);
         textMsg = getCommand(textMsg);
         if (textMsg.startsWith("/")) {
-            return performSpecialCommand(chatId, textMsg);
+            performSpecialCommand(chatId, textMsg);
         }
-        return performNonSpecialCommand(chatId, textMsg);
+        else {
+            performNonSpecialCommand(chatId, textMsg);
+        }
     }
 
     /**
@@ -63,40 +76,53 @@ public class MessageHandler {
      * @param chatId  идентификатор чата
      * @param textMsg сообщение
      */
-    private String performSpecialCommand(Long chatId, String textMsg) {
+    private void performSpecialCommand(Long chatId, String textMsg) {
         switch (textMsg) {
             case "/start":
-                return org.example.MessageProcessing.Messages.START_MESSAGE;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.START_MESSAGE);
+                break;
             case "/help":
-                return org.example.MessageProcessing.Messages.HELP_MESSAGE;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.HELP_MESSAGE);
+                break;
             case "/getNotesList":
                 messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
                 noteStorage.resetNote(chatId);
                 try {
-                    return org.example.MessageProcessing.NoteFormatter.getAllNotes(noteStorage.getAllNotes(chatId));
+                    messageSender.sendMessage(chatId, org.example.MessageProcessing.NoteFormatter.getAllNotes(noteStorage.getAllNotes(chatId)));
                 } catch (FormatterException e) {
-                    return e.getMessage();
+                    messageSender.sendMessage(chatId, e.getMessage());
                 }
+                break;
             case "/createNote":
                 messageHandlerState.put(chatId, MessageHandlerState.CREATING_NOTE_DATE);
-                return org.example.MessageProcessing.Messages.NOTE_CREATION;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_CREATION);
+                break;
             case "/openNote":
                 messageHandlerState.put(chatId, MessageHandlerState.SEARCHING_NOTE);
-                return org.example.MessageProcessing.Messages.NOTE_SEARCH;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_SEARCH);
+                break;
             case "/deleteNote":
                 messageHandlerState.put(chatId, MessageHandlerState.DELETING_NOTE);
-                return org.example.MessageProcessing.Messages.DELETE_NOTE;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.DELETE_NOTE);
+                break;
             case "/editNote":
                 messageHandlerState.put(chatId, MessageHandlerState.EDITING_NOTE);
-                return org.example.MessageProcessing.Messages.EDIT_NOTE;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.EDIT_NOTE);
+                break;
             case "/getStatistics":
                 messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
-                return getStatistics(chatId);
+                messageSender.sendMessage(chatId, getStatistics(chatId));
+                break;
+            case "/addNotification":
+                messageHandlerState.put(chatId, MessageHandlerState.ADDING_NOTIFICATION);
+                messageSender.sendMessage(chatId, org.example.Messages.ADDING_NOTIFICATION);
+                break;
             case "/cancel":
                 messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
-                return org.example.MessageProcessing.Messages.CANCEL;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.CANCEL);
+                break;
             default:
-                return org.example.MessageProcessing.Messages.DEFAULT_MESSAGE;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.DEFAULT_MESSAGE);
         }
     }
 
@@ -105,18 +131,42 @@ public class MessageHandler {
      *
      * @param chatId  идентификатор чата
      * @param textMsg сообщение о виде редактирования (удаление, добавление, выполнение задачи)
-     * @return сообщение о результате работы метода
      */
-    private String performNonSpecialCommand(Long chatId, String textMsg) {
-        return switch (messageHandlerState.get(chatId)) {
+    private void performNonSpecialCommand(Long chatId, String textMsg) {
+        switch (messageHandlerState.get(chatId)) {
             case CREATING_NOTE_DATE -> addNote(chatId, textMsg);
             case PROCESSING_NOTE -> toProcessExistingNote(chatId, textMsg);
             case SEARCHING_NOTE -> searchNote(chatId, textMsg);
             case DELETING_NOTE -> deleteNote(chatId, textMsg);
             case EDITING_NOTE -> toEditNoteState(chatId, textMsg);
             case PROCESSING_EDITING_NOTE -> getOption(chatId, textMsg);
-            default -> org.example.MessageProcessing.Messages.DEFAULT_MESSAGE;
+            case ADDING_NOTIFICATION -> toAddNotification(chatId, textMsg);
+            case CHOOSING_TASK_STATUS -> setTaskStatus(chatId, textMsg);
+           // case STATUS_CHOSEN ->
+            default -> messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.DEFAULT_MESSAGE);
         };
+    }
+
+    private void setTaskStatus(Long chatId, String message){
+        //messageHandlerState.put(chatId, MessageHandlerState.STATUS_CHOSEN);
+        messageSender.sendMessage(chatId, "Введите следующую задачу:");
+    }
+
+    /**
+     * Метод для добавления заметки
+     *
+     * @param chatId  идентификатор чата
+     * @param textMsg сообщение
+     */
+    private void toAddNotification(Long chatId, String textMsg) {
+        String[] lines = textMsg.split("\n");
+        String dateTimeLine = lines[0];
+        String title = lines[1];
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeLine, DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        Notification notification = new Notification(title, chatId, dateTime);
+        notificationRepository.addNotification(notification, chatId);
+        messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
+        messageSender.sendMessage(chatId, org.example.Messages.NOTIFICATION_ADDED);
     }
 
 
@@ -134,21 +184,20 @@ public class MessageHandler {
      * Выбор опции при редактировании заметки
      *
      * @param textMsg сообщение о виде редактирования (удаление, добавление, выполнение задачи)
-     * @return сообщение о результате работы метода
      */
-    public String getOption(Long chatId, String textMsg){
+    public void getOption(Long chatId, String textMsg){
         try {
             if (textMsg.startsWith("Добавить")) {
-                return addTask(chatId, textMsg);
+                messageSender.sendButtonMessage(chatId,addTask(chatId, textMsg), Buttons.getAllStatuses(taskStatus.getUserStatuses(chatId)));
             } else if (textMsg.startsWith("Удалить")) {
-                return deleteTask(chatId, textMsg);
+                messageSender.sendMessage(chatId, deleteTask(chatId, textMsg));
             } else if (textMsg.startsWith("Отметить выполненным")) {
-                return completeTask(chatId, textMsg);
+                messageSender.sendMessage(chatId, completeTask(chatId, textMsg));
             } else {
-                return org.example.MessageProcessing.Messages.WRONG_COMMAND;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.WRONG_COMMAND);
             }
         } catch (Exception e) {
-            return org.example.MessageProcessing.Messages.WRONG_COMMAND;
+            messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.WRONG_COMMAND);
         }
     }
 
@@ -184,8 +233,12 @@ public class MessageHandler {
      * @return сообщение о результате работы метода
      */
     private String addTask(Long chatId, String textMsg) {
-        noteStorage.addTaskToNote(chatId, textMsg.substring(9));
-        return org.example.MessageProcessing.Messages.TASK_ADDED;
+        String message = textMsg.substring(9);
+        toProcessExistingNote(chatId, message);
+        noteStorage.addTaskToNote(chatId, message);
+        messageHandlerState.put(chatId, MessageHandlerState.CHOOSING_TASK_STATUS);
+        return org.example.MessageProcessing.Messages.TASK_ADDED + ": " + message;
+
     }
 
 
@@ -194,16 +247,15 @@ public class MessageHandler {
      *
      * @param chatId  идентификатор чата
      * @param textMsg дата заметки
-     * @return сообщение о результате работы метода
      */
-    private String toEditNoteState(Long chatId, String textMsg) {
+    private void toEditNoteState(Long chatId, String textMsg) {
         try {
             messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_EDITING_NOTE);
             Note note = noteStorage.getNote(chatId, Parser.parseData(textMsg));
-            return NoteFormatter.getNoteText(note) + org.example.MessageProcessing.Messages.NOTE_EDITING;
+            messageSender.sendMessage(chatId, NoteFormatter.getNoteText(note) + org.example.MessageProcessing.Messages.NOTE_EDITING);
         } catch (Exception e) {
             messageHandlerState.put(chatId, MessageHandlerState.EDITING_NOTE);
-            return e.getMessage();
+            messageSender.sendMessage(chatId, e.getMessage());
         }
     }
 
@@ -212,19 +264,18 @@ public class MessageHandler {
      *
      * @param chatId  идентификатор чата
      * @param message дата заметки
-     * @return сообщение о результате работы метода
      */
-    private String addNote(Long chatId, String message) {
+    private void addNote(Long chatId, String message) {
         try {
             if (noteStorage.addNote(chatId, Parser.parseData(message))) {
                 messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_NOTE);
-                return org.example.MessageProcessing.Messages.NOTE_MODIFICATION;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_MODIFICATION);
             } else {
                 messageHandlerState.put(chatId, MessageHandlerState.CREATING_NOTE_DATE);
-                return org.example.MessageProcessing.Messages.NOTE_ALREADY_EXIST;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_ALREADY_EXIST);
             }
         } catch (ParserException e) {
-            return e.getMessage();
+            messageSender.sendMessage(chatId, e.getMessage());
         }
 
     }
@@ -234,27 +285,27 @@ public class MessageHandler {
      *
      * @param message текст новой задачи для заметки
      *                (в заметке несколько задач)
-     * @return сообщение о результате работы метода
      */
-    private String toProcessExistingNote(Long chatId, String message) {
+    private void toProcessExistingNote(Long chatId, String message) {
         noteStorage.addTaskToNote(chatId, message);
-        return org.example.MessageProcessing.Messages.TASK_ADDED;
+        messageHandlerState.put(chatId, MessageHandlerState.CHOOSING_TASK_STATUS);
+        messageSender.sendButtonMessage(chatId, org.example.MessageProcessing.Messages.TASK_ADDED + ": " + message,
+                Buttons.getAllStatuses(taskStatus.getUserStatuses(chatId)));
     }
 
     /**
      * Поиск заметки по дате
      *
      * @param message дата заметки
-     * @return сообщение о результате работы метода
      */
-    private String searchNote(Long chatId, String message) {
+    private void searchNote(Long chatId, String message) {
         try {
             messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
             Note note = noteStorage.getNote(chatId, Parser.parseData(message));
-            return NoteFormatter.getNoteText(note);
+            messageSender.sendMessage(chatId, NoteFormatter.getNoteText(note));
         } catch (Exception e) {
             messageHandlerState.put(chatId, MessageHandlerState.SEARCHING_NOTE);
-            return e.getMessage();
+            messageSender.sendMessage(chatId, e.getMessage());
         }
     }
 
@@ -263,22 +314,22 @@ public class MessageHandler {
      *
      * @param chatId  идентификатор чата
      * @param message дата заметки
-     * @return сообщение о результате работы метода
      */
-    private String deleteNote(Long chatId, String message) {
+    private void deleteNote(Long chatId, String message) {
 
         try {
             messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
             LocalDate localDate = Parser.parseData(message);
             if (noteStorage.isPossibleToDeleteNote(chatId, localDate)) {
                 noteStorage.deleteNote(chatId, localDate);
-                return org.example.MessageProcessing.Messages.NOTE_DELETED;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_DELETED);
             } else {
-                return org.example.MessageProcessing.Messages.NO_SUCH_NOTE;
+                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NO_SUCH_NOTE);
             }
         } catch (ParserException e) {
             messageHandlerState.put(chatId, MessageHandlerState.DELETING_NOTE);
-            return e.getMessage();
+            messageSender.sendMessage(chatId, e.getMessage());
         }
     }
+
 }
