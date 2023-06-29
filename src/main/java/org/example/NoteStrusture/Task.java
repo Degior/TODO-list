@@ -9,7 +9,7 @@ public class Task {
 
     private final String description;
 
-    private String details;
+    private String status;
 
     public Task(String description) {
         this.description = description;
@@ -28,5 +28,13 @@ public class Task {
         return state == TaskState.DONE;
     }
 
+    public void setStatus(String status){
+        this.status = status;
+    }
 
+    public boolean hasStatus(){
+        return !(status == null);
+    }
+
+    public String getStatus(){return status;}
 }

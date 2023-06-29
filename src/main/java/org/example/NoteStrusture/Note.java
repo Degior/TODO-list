@@ -65,4 +65,8 @@ public class Note {
     public void markTaskAsCompleted(int index) {
         tasksList.get(index - 1).setDone();
     }
+
+    public void addTaskStatus(String status){
+        tasksList.get(tasksList.size()-1).setStatus(status);
+    }
 }

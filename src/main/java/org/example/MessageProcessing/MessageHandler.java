@@ -1,5 +1,6 @@
 package org.example.MessageProcessing;
 
+import org.example.Messages;
 import org.example.NoteStrusture.Note;
 import org.example.NoteStrusture.NoteStorage;
 import org.example.NoteStrusture.TaskStatus;
@@ -48,6 +49,7 @@ public class MessageHandler {
             case "/Удалить заметку" -> "/deleteNote";
             case "/Редактировать заметку" -> "/editNote";
             case "/Посмотреть статистику" -> "/getStatistics";
+            case "/Добавить категорию" -> "/addStatus";
             case "/Отмена" -> "/cancel";
             default -> textMsg;
         };
@@ -59,8 +61,11 @@ public class MessageHandler {
      * Если введена не специальная команда, то вызывается метод getNonSpecialCommand.
      */
     public void processInput(Long chatId, String textMsg) {
+        if (!messageHandlerState.containsKey(chatId)){
+            taskStatus.initUser(chatId);
+        }
         messageHandlerState.putIfAbsent(chatId, MessageHandlerState.DEFAULT);
-        taskStatus.initUser(chatId);
+
         textMsg = getCommand(textMsg);
         if (textMsg.startsWith("/")) {
             performSpecialCommand(chatId, textMsg);
@@ -79,10 +84,10 @@ public class MessageHandler {
     private void performSpecialCommand(Long chatId, String textMsg) {
         switch (textMsg) {
             case "/start":
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.START_MESSAGE);
+                messageSender.sendMessage(chatId, Messages.START_MESSAGE);
                 break;
             case "/help":
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.HELP_MESSAGE);
+                messageSender.sendMessage(chatId, Messages.HELP_MESSAGE);
                 break;
             case "/getNotesList":
                 messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
@@ -95,19 +100,19 @@ public class MessageHandler {
                 break;
             case "/createNote":
                 messageHandlerState.put(chatId, MessageHandlerState.CREATING_NOTE_DATE);
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_CREATION);
+                messageSender.sendMessage(chatId, Messages.NOTE_CREATION);
                 break;
             case "/openNote":
                 messageHandlerState.put(chatId, MessageHandlerState.SEARCHING_NOTE);
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_SEARCH);
+                messageSender.sendMessage(chatId, Messages.NOTE_SEARCH);
                 break;
             case "/deleteNote":
                 messageHandlerState.put(chatId, MessageHandlerState.DELETING_NOTE);
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.DELETE_NOTE);
+                messageSender.sendMessage(chatId, Messages.DELETE_NOTE);
                 break;
             case "/editNote":
                 messageHandlerState.put(chatId, MessageHandlerState.EDITING_NOTE);
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.EDIT_NOTE);
+                messageSender.sendMessage(chatId, Messages.EDIT_NOTE);
                 break;
             case "/getStatistics":
                 messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
@@ -117,12 +122,16 @@ public class MessageHandler {
                 messageHandlerState.put(chatId, MessageHandlerState.ADDING_NOTIFICATION);
                 messageSender.sendMessage(chatId, org.example.Messages.ADDING_NOTIFICATION);
                 break;
+            case "/addStatus":
+                messageHandlerState.put(chatId, MessageHandlerState.ADDING_STATUS);
+                messageSender.sendMessage(chatId, org.example.Messages.ADDING_STATUS);
+                break;
             case "/cancel":
                 messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.CANCEL);
+                messageSender.sendMessage(chatId, Messages.CANCEL);
                 break;
             default:
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.DEFAULT_MESSAGE);
+                messageSender.sendMessage(chatId, Messages.DEFAULT_MESSAGE);
         }
     }
 
@@ -142,14 +151,25 @@ public class MessageHandler {
             case PROCESSING_EDITING_NOTE -> getOption(chatId, textMsg);
             case ADDING_NOTIFICATION -> toAddNotification(chatId, textMsg);
             case CHOOSING_TASK_STATUS -> setTaskStatus(chatId, textMsg);
-           // case STATUS_CHOSEN ->
-            default -> messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.DEFAULT_MESSAGE);
+            case ADDING_STATUS -> setNewTaskStatus(chatId, textMsg);
+            default -> messageSender.sendMessage(chatId, Messages.DEFAULT_MESSAGE);
         };
     }
 
+    private void setNewTaskStatus(Long chatId, String message) {
+        taskStatus.setNewStatus(chatId, message);
+        messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
+        messageSender.sendMessage(chatId, org.example.Messages.STATUS_ADDED);
+    }
+
     private void setTaskStatus(Long chatId, String message){
-        //messageHandlerState.put(chatId, MessageHandlerState.STATUS_CHOSEN);
-        messageSender.sendMessage(chatId, "Введите следующую задачу:");
+        messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_NOTE);
+        for (String possibleStatus: taskStatus.getUserStatuses(chatId)){
+            if (message.equals(possibleStatus) && !message.equals("Пропустить")){
+                noteStorage.addTaskStatus(chatId, message);
+            }
+        }
+        messageSender.sendButtonMessage(chatId, "Введите следующую задачу:", Buttons.endNoteEditing());
     }
 
     /**
@@ -188,16 +208,16 @@ public class MessageHandler {
     public void getOption(Long chatId, String textMsg){
         try {
             if (textMsg.startsWith("Добавить")) {
-                messageSender.sendButtonMessage(chatId,addTask(chatId, textMsg), Buttons.getAllStatuses(taskStatus.getUserStatuses(chatId)));
+                messageSender.sendButtonMessage(chatId, addTask(chatId, textMsg), Buttons.getAllStatuses(taskStatus.getUserStatuses(chatId)));
             } else if (textMsg.startsWith("Удалить")) {
                 messageSender.sendMessage(chatId, deleteTask(chatId, textMsg));
             } else if (textMsg.startsWith("Отметить выполненным")) {
                 messageSender.sendMessage(chatId, completeTask(chatId, textMsg));
             } else {
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.WRONG_COMMAND);
+                messageSender.sendMessage(chatId, Messages.WRONG_COMMAND);
             }
         } catch (Exception e) {
-            messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.WRONG_COMMAND);
+            messageSender.sendMessage(chatId, Messages.WRONG_COMMAND);
         }
     }
 
@@ -209,9 +229,9 @@ public class MessageHandler {
      */
     private String deleteTask(Long chatId, String textMsg) {
         if (noteStorage.deleteTextFromNote(chatId, Integer.parseInt(textMsg.substring(8)))) {
-            return org.example.MessageProcessing.Messages.DELETED_TASK;
+            return Messages.DELETED_TASK;
         }
-        return org.example.MessageProcessing.Messages.WRONG_TASK_INDEX;
+        return Messages.WRONG_TASK_INDEX;
     }
 
     /**
@@ -223,7 +243,7 @@ public class MessageHandler {
     private String completeTask(Long chatId, String textMsg) {
         noteStorage.markTaskAsCompleted(chatId, Integer.parseInt(textMsg.substring(21)));
         messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_NOTE);
-        return org.example.MessageProcessing.Messages.NOTE_EDITED;
+        return Messages.NOTE_EDITED;
     }
 
     /**
@@ -234,10 +254,9 @@ public class MessageHandler {
      */
     private String addTask(Long chatId, String textMsg) {
         String message = textMsg.substring(9);
-        toProcessExistingNote(chatId, message);
         noteStorage.addTaskToNote(chatId, message);
         messageHandlerState.put(chatId, MessageHandlerState.CHOOSING_TASK_STATUS);
-        return org.example.MessageProcessing.Messages.TASK_ADDED + ": " + message;
+        return Messages.TASK_ADDED + ": " + message;
 
     }
 
@@ -252,7 +271,7 @@ public class MessageHandler {
         try {
             messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_EDITING_NOTE);
             Note note = noteStorage.getNote(chatId, Parser.parseData(textMsg));
-            messageSender.sendMessage(chatId, NoteFormatter.getNoteText(note) + org.example.MessageProcessing.Messages.NOTE_EDITING);
+            messageSender.sendMessage(chatId, NoteFormatter.getNoteText(note) + Messages.NOTE_EDITING);
         } catch (Exception e) {
             messageHandlerState.put(chatId, MessageHandlerState.EDITING_NOTE);
             messageSender.sendMessage(chatId, e.getMessage());
@@ -269,10 +288,10 @@ public class MessageHandler {
         try {
             if (noteStorage.addNote(chatId, Parser.parseData(message))) {
                 messageHandlerState.put(chatId, MessageHandlerState.PROCESSING_NOTE);
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_MODIFICATION);
+                messageSender.sendMessage(chatId, Messages.NOTE_MODIFICATION);
             } else {
                 messageHandlerState.put(chatId, MessageHandlerState.CREATING_NOTE_DATE);
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_ALREADY_EXIST);
+                messageSender.sendMessage(chatId, Messages.NOTE_ALREADY_EXIST);
             }
         } catch (ParserException e) {
             messageSender.sendMessage(chatId, e.getMessage());
@@ -287,10 +306,17 @@ public class MessageHandler {
      *                (в заметке несколько задач)
      */
     private void toProcessExistingNote(Long chatId, String message) {
-        noteStorage.addTaskToNote(chatId, message);
-        messageHandlerState.put(chatId, MessageHandlerState.CHOOSING_TASK_STATUS);
-        messageSender.sendButtonMessage(chatId, org.example.MessageProcessing.Messages.TASK_ADDED + ": " + message,
-                Buttons.getAllStatuses(taskStatus.getUserStatuses(chatId)));
+        if (!message.equals("Заметка сохранена")){
+            noteStorage.addTaskToNote(chatId, message);
+            messageHandlerState.put(chatId, MessageHandlerState.CHOOSING_TASK_STATUS);
+            messageSender.sendButtonMessage(chatId, Messages.TASK_ADDED + ": " + message,
+                    Buttons.getAllStatuses(taskStatus.getUserStatuses(chatId)));
+        }
+        else {
+            messageHandlerState.put(chatId, MessageHandlerState.DEFAULT);
+            messageSender.sendMessage(chatId, message);
+        }
+
     }
 
     /**
@@ -322,9 +348,9 @@ public class MessageHandler {
             LocalDate localDate = Parser.parseData(message);
             if (noteStorage.isPossibleToDeleteNote(chatId, localDate)) {
                 noteStorage.deleteNote(chatId, localDate);
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NOTE_DELETED);
+                messageSender.sendMessage(chatId, Messages.NOTE_DELETED);
             } else {
-                messageSender.sendMessage(chatId, org.example.MessageProcessing.Messages.NO_SUCH_NOTE);
+                messageSender.sendMessage(chatId, Messages.NO_SUCH_NOTE);
             }
         } catch (ParserException e) {
             messageHandlerState.put(chatId, MessageHandlerState.DELETING_NOTE);

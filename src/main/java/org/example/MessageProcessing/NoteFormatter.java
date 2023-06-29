@@ -31,8 +31,12 @@ public class NoteFormatter {
                 noteText.append("V ").append(task.getDescription()).append("\n");
             }
             else {
-                noteText.append(counter).append(". ").append(task.getDescription()).append("\n");
+                noteText.append(counter).append(". ").append(task.getDescription());
             }
+            if (task.hasStatus()){
+                noteText.append(" ").append(task.getStatus());
+            }
+            noteText.append("\n");
             counter++;
         }
         return noteText.toString();

@@ -130,4 +130,8 @@ public class NoteStorage {
     public void resetNote(Long chatId) {
         currentNotes.put(chatId, null);
     }
+
+    public void addTaskStatus(Long chatId, String message) {
+        currentNotes.get(chatId).addTaskStatus(message);
+    }
 }

@@ -25,6 +25,8 @@ public class Messages {
             посмотреть статистику по всем заметкам
             /addNotification (Добавить уведомление)
             добавить уведомление на конкретное время
+            /addStatus (Добавить категорию задачи)
+            добавить категорию для задач из заметки
             /cancel (Отмена)
             отменить текущее действие
             """; // Сообщение с описанием команд
@@ -65,4 +67,7 @@ public class Messages {
             Пора кушать
             """;
     public static final String NOTIFICATION_ADDED = "Уведомление добавлено";
+    public static final String ADDING_STATUS = "Введите название категории:";
+
+    public static final String STATUS_ADDED = "Категория добавлена. Продолжите работу с заметками";
 }
