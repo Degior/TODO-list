@@ -167,6 +167,7 @@ public class MessageHandler {
         for (String possibleStatus: taskStatus.getUserStatuses(chatId)){
             if (message.equals(possibleStatus) && !message.equals("Пропустить")){
                 noteStorage.addTaskStatus(chatId, message);
+                break;
             }
         }
         messageSender.sendButtonMessage(chatId, "Введите следующую задачу:", Buttons.endNoteEditing());
